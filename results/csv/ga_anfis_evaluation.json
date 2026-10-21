@@ -1,0 +1,170 @@
+{
+  "dataset": {
+    "rows": 5033,
+    "features": 230,
+    "labels": {
+      "0": 4988,
+      "1": 45
+    },
+    "patient": "CHB-MIT subject chb03 only",
+    "window_seconds": 5,
+    "label_semantics": "at least 2.5 seconds of overlap with annotated seizure"
+  },
+  "split": {
+    "train_files": [
+      "chb03_01.edf",
+      "chb03_15.edf",
+      "chb03_16.edf",
+      "chb03_34.edf"
+    ],
+    "validation_files": [
+      "chb03_35.edf"
+    ],
+    "test_files": [
+      "chb03_17.edf",
+      "chb03_36.edf"
+    ],
+    "counts": {
+      "train": 2876,
+      "validation": 719,
+      "test": 1438
+    },
+    "positive_windows": {
+      "train": 21,
+      "validation": 13,
+      "test": 11
+    }
+  },
+  "ga": {
+    "configuration": {
+      "population_size": 12,
+      "generations": 6,
+      "max_features": 4,
+      "mutation_rate": 0.04,
+      "random_state": 42,
+      "selection": "uniform sampling from the top third",
+      "crossover": "uniform",
+      "stopping": "configured generations or 3 stagnant generations",
+      "fitness": "mean recording-grouped CV window F1 minus 0.002 per feature"
+    },
+    "selected_features": [
+      "ch3_variance",
+      "ch4_std",
+      "ch18_rms",
+      "ch21_mean"
+    ],
+    "best_grouped_cv_fitness": 0.2672380952380952,
+    "history": [
+      {
+        "generation": 1,
+        "fitness": 0.2308888888888889,
+        "selected_count": 4
+      },
+      {
+        "generation": 2,
+        "fitness": 0.2308888888888889,
+        "selected_count": 4
+      },
+      {
+        "generation": 3,
+        "fitness": 0.2308888888888889,
+        "selected_count": 4
+      },
+      {
+        "generation": 4,
+        "fitness": 0.2635617715617716,
+        "selected_count": 4
+      },
+      {
+        "generation": 5,
+        "fitness": 0.2672380952380952,
+        "selected_count": 4
+      },
+      {
+        "generation": 6,
+        "fitness": 0.2672380952380952,
+        "selected_count": 4
+      }
+    ]
+  },
+  "anfis": {
+    "objective": "class-balanced binary cross entropy + L2",
+    "optimizer": "L-BFGS (joint premise and consequent gradient updates)",
+    "iterations": 45,
+    "converged": true,
+    "loss": 0.11105453847415221,
+    "membership_functions_per_feature": 2,
+    "rule_count": 16,
+    "consequent": "first-order linear Sugeno"
+  },
+  "validation_threshold": 0.9500000000000002,
+  "test": {
+    "ga_anfis": {
+      "threshold": 0.9500000000000002,
+      "accuracy": 0.9847009735744089,
+      "precision": 0.2962962962962963,
+      "sensitivity": 0.7272727272727273,
+      "specificity": 0.9866853538892782,
+      "f1": 0.42105263157894735,
+      "confusion_matrix_tn_fp_fn_tp": [
+        1408,
+        19,
+        3,
+        8
+      ],
+      "roc_auc": 0.8939924826399949
+    },
+    "random_forest_same_features": {
+      "threshold": 0.5300000000000001,
+      "accuracy": 0.9860917941585535,
+      "precision": 0.2,
+      "sensitivity": 0.2727272727272727,
+      "specificity": 0.9915907498248073,
+      "f1": 0.23076923076923078,
+      "confusion_matrix_tn_fp_fn_tp": [
+        1415,
+        12,
+        8,
+        3
+      ],
+      "roc_auc": 0.9875772440593744
+    },
+    "event_level": {
+      "ga_anfis": {
+        "ground_truth_events": 1,
+        "detected_events": 1,
+        "event_sensitivity": 1.0,
+        "predicted_events": 4,
+        "false_alarm_events": 3,
+        "false_alarms_per_hour": 1.502086230876217,
+        "onset_offset_seconds": [
+          0.0
+        ],
+        "postprocessing": {
+          "merge_gap_seconds": 30.0,
+          "minimum_duration_seconds": 10.0
+        },
+        "interpretation": "Exploratory event detection on one held-out annotated event; onset offset is not a preictal warning latency."
+      },
+      "random_forest": {
+        "ground_truth_events": 1,
+        "detected_events": 1,
+        "event_sensitivity": 1.0,
+        "predicted_events": 2,
+        "false_alarm_events": 1,
+        "false_alarms_per_hour": 0.5006954102920723,
+        "onset_offset_seconds": [
+          20.0
+        ],
+        "postprocessing": {
+          "merge_gap_seconds": 30.0,
+          "minimum_duration_seconds": 10.0
+        },
+        "interpretation": "Exploratory event detection on one held-out annotated event; onset offset is not a preictal warning latency."
+      }
+    },
+    "random_forest_validation_threshold": 0.5300000000000001,
+    "score_note": "Sigmoid outputs are model scores; no probability calibration was fitted.",
+    "window_metrics_are_window_level": true
+  }
+}

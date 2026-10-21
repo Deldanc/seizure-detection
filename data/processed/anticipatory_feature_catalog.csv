@@ -1,0 +1,346 @@
+feature,channel_index,channel_name,family,frequency_range_hz,formula,unit
+ch0_mean,0,FP1-F7,time domain,,mean(signal),V
+ch0_std,0,FP1-F7,time domain,,population standard deviation,V
+ch0_variance,0,FP1-F7,time domain,,population variance,V^2
+ch0_rms,0,FP1-F7,time domain,,sqrt(mean(signal^2)),V
+ch0_energy,0,FP1-F7,time domain,,sum(signal^2) over window samples,V^2 samples
+ch0_delta_power,0,FP1-F7,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch0_delta_relative_power,0,FP1-F7,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch0_theta_power,0,FP1-F7,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch0_theta_relative_power,0,FP1-F7,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch0_alpha_power,0,FP1-F7,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch0_alpha_relative_power,0,FP1-F7,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch0_beta_power,0,FP1-F7,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch0_beta_relative_power,0,FP1-F7,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch0_gamma_power,0,FP1-F7,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch0_gamma_relative_power,0,FP1-F7,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch1_mean,1,F7-T7,time domain,,mean(signal),V
+ch1_std,1,F7-T7,time domain,,population standard deviation,V
+ch1_variance,1,F7-T7,time domain,,population variance,V^2
+ch1_rms,1,F7-T7,time domain,,sqrt(mean(signal^2)),V
+ch1_energy,1,F7-T7,time domain,,sum(signal^2) over window samples,V^2 samples
+ch1_delta_power,1,F7-T7,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch1_delta_relative_power,1,F7-T7,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch1_theta_power,1,F7-T7,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch1_theta_relative_power,1,F7-T7,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch1_alpha_power,1,F7-T7,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch1_alpha_relative_power,1,F7-T7,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch1_beta_power,1,F7-T7,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch1_beta_relative_power,1,F7-T7,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch1_gamma_power,1,F7-T7,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch1_gamma_relative_power,1,F7-T7,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch2_mean,2,T7-P7,time domain,,mean(signal),V
+ch2_std,2,T7-P7,time domain,,population standard deviation,V
+ch2_variance,2,T7-P7,time domain,,population variance,V^2
+ch2_rms,2,T7-P7,time domain,,sqrt(mean(signal^2)),V
+ch2_energy,2,T7-P7,time domain,,sum(signal^2) over window samples,V^2 samples
+ch2_delta_power,2,T7-P7,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch2_delta_relative_power,2,T7-P7,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch2_theta_power,2,T7-P7,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch2_theta_relative_power,2,T7-P7,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch2_alpha_power,2,T7-P7,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch2_alpha_relative_power,2,T7-P7,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch2_beta_power,2,T7-P7,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch2_beta_relative_power,2,T7-P7,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch2_gamma_power,2,T7-P7,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch2_gamma_relative_power,2,T7-P7,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch3_mean,3,P7-O1,time domain,,mean(signal),V
+ch3_std,3,P7-O1,time domain,,population standard deviation,V
+ch3_variance,3,P7-O1,time domain,,population variance,V^2
+ch3_rms,3,P7-O1,time domain,,sqrt(mean(signal^2)),V
+ch3_energy,3,P7-O1,time domain,,sum(signal^2) over window samples,V^2 samples
+ch3_delta_power,3,P7-O1,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch3_delta_relative_power,3,P7-O1,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch3_theta_power,3,P7-O1,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch3_theta_relative_power,3,P7-O1,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch3_alpha_power,3,P7-O1,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch3_alpha_relative_power,3,P7-O1,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch3_beta_power,3,P7-O1,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch3_beta_relative_power,3,P7-O1,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch3_gamma_power,3,P7-O1,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch3_gamma_relative_power,3,P7-O1,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch4_mean,4,FP1-F3,time domain,,mean(signal),V
+ch4_std,4,FP1-F3,time domain,,population standard deviation,V
+ch4_variance,4,FP1-F3,time domain,,population variance,V^2
+ch4_rms,4,FP1-F3,time domain,,sqrt(mean(signal^2)),V
+ch4_energy,4,FP1-F3,time domain,,sum(signal^2) over window samples,V^2 samples
+ch4_delta_power,4,FP1-F3,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch4_delta_relative_power,4,FP1-F3,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch4_theta_power,4,FP1-F3,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch4_theta_relative_power,4,FP1-F3,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch4_alpha_power,4,FP1-F3,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch4_alpha_relative_power,4,FP1-F3,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch4_beta_power,4,FP1-F3,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch4_beta_relative_power,4,FP1-F3,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch4_gamma_power,4,FP1-F3,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch4_gamma_relative_power,4,FP1-F3,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch5_mean,5,F3-C3,time domain,,mean(signal),V
+ch5_std,5,F3-C3,time domain,,population standard deviation,V
+ch5_variance,5,F3-C3,time domain,,population variance,V^2
+ch5_rms,5,F3-C3,time domain,,sqrt(mean(signal^2)),V
+ch5_energy,5,F3-C3,time domain,,sum(signal^2) over window samples,V^2 samples
+ch5_delta_power,5,F3-C3,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch5_delta_relative_power,5,F3-C3,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch5_theta_power,5,F3-C3,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch5_theta_relative_power,5,F3-C3,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch5_alpha_power,5,F3-C3,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch5_alpha_relative_power,5,F3-C3,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch5_beta_power,5,F3-C3,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch5_beta_relative_power,5,F3-C3,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch5_gamma_power,5,F3-C3,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch5_gamma_relative_power,5,F3-C3,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch6_mean,6,C3-P3,time domain,,mean(signal),V
+ch6_std,6,C3-P3,time domain,,population standard deviation,V
+ch6_variance,6,C3-P3,time domain,,population variance,V^2
+ch6_rms,6,C3-P3,time domain,,sqrt(mean(signal^2)),V
+ch6_energy,6,C3-P3,time domain,,sum(signal^2) over window samples,V^2 samples
+ch6_delta_power,6,C3-P3,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch6_delta_relative_power,6,C3-P3,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch6_theta_power,6,C3-P3,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch6_theta_relative_power,6,C3-P3,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch6_alpha_power,6,C3-P3,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch6_alpha_relative_power,6,C3-P3,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch6_beta_power,6,C3-P3,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch6_beta_relative_power,6,C3-P3,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch6_gamma_power,6,C3-P3,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch6_gamma_relative_power,6,C3-P3,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch7_mean,7,P3-O1,time domain,,mean(signal),V
+ch7_std,7,P3-O1,time domain,,population standard deviation,V
+ch7_variance,7,P3-O1,time domain,,population variance,V^2
+ch7_rms,7,P3-O1,time domain,,sqrt(mean(signal^2)),V
+ch7_energy,7,P3-O1,time domain,,sum(signal^2) over window samples,V^2 samples
+ch7_delta_power,7,P3-O1,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch7_delta_relative_power,7,P3-O1,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch7_theta_power,7,P3-O1,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch7_theta_relative_power,7,P3-O1,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch7_alpha_power,7,P3-O1,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch7_alpha_relative_power,7,P3-O1,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch7_beta_power,7,P3-O1,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch7_beta_relative_power,7,P3-O1,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch7_gamma_power,7,P3-O1,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch7_gamma_relative_power,7,P3-O1,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch8_mean,8,FP2-F4,time domain,,mean(signal),V
+ch8_std,8,FP2-F4,time domain,,population standard deviation,V
+ch8_variance,8,FP2-F4,time domain,,population variance,V^2
+ch8_rms,8,FP2-F4,time domain,,sqrt(mean(signal^2)),V
+ch8_energy,8,FP2-F4,time domain,,sum(signal^2) over window samples,V^2 samples
+ch8_delta_power,8,FP2-F4,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch8_delta_relative_power,8,FP2-F4,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch8_theta_power,8,FP2-F4,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch8_theta_relative_power,8,FP2-F4,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch8_alpha_power,8,FP2-F4,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch8_alpha_relative_power,8,FP2-F4,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch8_beta_power,8,FP2-F4,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch8_beta_relative_power,8,FP2-F4,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch8_gamma_power,8,FP2-F4,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch8_gamma_relative_power,8,FP2-F4,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch9_mean,9,F4-C4,time domain,,mean(signal),V
+ch9_std,9,F4-C4,time domain,,population standard deviation,V
+ch9_variance,9,F4-C4,time domain,,population variance,V^2
+ch9_rms,9,F4-C4,time domain,,sqrt(mean(signal^2)),V
+ch9_energy,9,F4-C4,time domain,,sum(signal^2) over window samples,V^2 samples
+ch9_delta_power,9,F4-C4,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch9_delta_relative_power,9,F4-C4,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch9_theta_power,9,F4-C4,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch9_theta_relative_power,9,F4-C4,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch9_alpha_power,9,F4-C4,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch9_alpha_relative_power,9,F4-C4,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch9_beta_power,9,F4-C4,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch9_beta_relative_power,9,F4-C4,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch9_gamma_power,9,F4-C4,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch9_gamma_relative_power,9,F4-C4,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch10_mean,10,C4-P4,time domain,,mean(signal),V
+ch10_std,10,C4-P4,time domain,,population standard deviation,V
+ch10_variance,10,C4-P4,time domain,,population variance,V^2
+ch10_rms,10,C4-P4,time domain,,sqrt(mean(signal^2)),V
+ch10_energy,10,C4-P4,time domain,,sum(signal^2) over window samples,V^2 samples
+ch10_delta_power,10,C4-P4,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch10_delta_relative_power,10,C4-P4,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch10_theta_power,10,C4-P4,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch10_theta_relative_power,10,C4-P4,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch10_alpha_power,10,C4-P4,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch10_alpha_relative_power,10,C4-P4,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch10_beta_power,10,C4-P4,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch10_beta_relative_power,10,C4-P4,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch10_gamma_power,10,C4-P4,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch10_gamma_relative_power,10,C4-P4,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch11_mean,11,P4-O2,time domain,,mean(signal),V
+ch11_std,11,P4-O2,time domain,,population standard deviation,V
+ch11_variance,11,P4-O2,time domain,,population variance,V^2
+ch11_rms,11,P4-O2,time domain,,sqrt(mean(signal^2)),V
+ch11_energy,11,P4-O2,time domain,,sum(signal^2) over window samples,V^2 samples
+ch11_delta_power,11,P4-O2,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch11_delta_relative_power,11,P4-O2,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch11_theta_power,11,P4-O2,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch11_theta_relative_power,11,P4-O2,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch11_alpha_power,11,P4-O2,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch11_alpha_relative_power,11,P4-O2,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch11_beta_power,11,P4-O2,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch11_beta_relative_power,11,P4-O2,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch11_gamma_power,11,P4-O2,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch11_gamma_relative_power,11,P4-O2,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch12_mean,12,FP2-F8,time domain,,mean(signal),V
+ch12_std,12,FP2-F8,time domain,,population standard deviation,V
+ch12_variance,12,FP2-F8,time domain,,population variance,V^2
+ch12_rms,12,FP2-F8,time domain,,sqrt(mean(signal^2)),V
+ch12_energy,12,FP2-F8,time domain,,sum(signal^2) over window samples,V^2 samples
+ch12_delta_power,12,FP2-F8,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch12_delta_relative_power,12,FP2-F8,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch12_theta_power,12,FP2-F8,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch12_theta_relative_power,12,FP2-F8,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch12_alpha_power,12,FP2-F8,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch12_alpha_relative_power,12,FP2-F8,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch12_beta_power,12,FP2-F8,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch12_beta_relative_power,12,FP2-F8,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch12_gamma_power,12,FP2-F8,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch12_gamma_relative_power,12,FP2-F8,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch13_mean,13,F8-T8,time domain,,mean(signal),V
+ch13_std,13,F8-T8,time domain,,population standard deviation,V
+ch13_variance,13,F8-T8,time domain,,population variance,V^2
+ch13_rms,13,F8-T8,time domain,,sqrt(mean(signal^2)),V
+ch13_energy,13,F8-T8,time domain,,sum(signal^2) over window samples,V^2 samples
+ch13_delta_power,13,F8-T8,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch13_delta_relative_power,13,F8-T8,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch13_theta_power,13,F8-T8,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch13_theta_relative_power,13,F8-T8,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch13_alpha_power,13,F8-T8,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch13_alpha_relative_power,13,F8-T8,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch13_beta_power,13,F8-T8,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch13_beta_relative_power,13,F8-T8,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch13_gamma_power,13,F8-T8,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch13_gamma_relative_power,13,F8-T8,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch14_mean,14,T8-P8-0,time domain,,mean(signal),V
+ch14_std,14,T8-P8-0,time domain,,population standard deviation,V
+ch14_variance,14,T8-P8-0,time domain,,population variance,V^2
+ch14_rms,14,T8-P8-0,time domain,,sqrt(mean(signal^2)),V
+ch14_energy,14,T8-P8-0,time domain,,sum(signal^2) over window samples,V^2 samples
+ch14_delta_power,14,T8-P8-0,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch14_delta_relative_power,14,T8-P8-0,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch14_theta_power,14,T8-P8-0,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch14_theta_relative_power,14,T8-P8-0,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch14_alpha_power,14,T8-P8-0,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch14_alpha_relative_power,14,T8-P8-0,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch14_beta_power,14,T8-P8-0,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch14_beta_relative_power,14,T8-P8-0,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch14_gamma_power,14,T8-P8-0,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch14_gamma_relative_power,14,T8-P8-0,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch15_mean,15,P8-O2,time domain,,mean(signal),V
+ch15_std,15,P8-O2,time domain,,population standard deviation,V
+ch15_variance,15,P8-O2,time domain,,population variance,V^2
+ch15_rms,15,P8-O2,time domain,,sqrt(mean(signal^2)),V
+ch15_energy,15,P8-O2,time domain,,sum(signal^2) over window samples,V^2 samples
+ch15_delta_power,15,P8-O2,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch15_delta_relative_power,15,P8-O2,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch15_theta_power,15,P8-O2,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch15_theta_relative_power,15,P8-O2,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch15_alpha_power,15,P8-O2,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch15_alpha_relative_power,15,P8-O2,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch15_beta_power,15,P8-O2,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch15_beta_relative_power,15,P8-O2,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch15_gamma_power,15,P8-O2,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch15_gamma_relative_power,15,P8-O2,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch16_mean,16,FZ-CZ,time domain,,mean(signal),V
+ch16_std,16,FZ-CZ,time domain,,population standard deviation,V
+ch16_variance,16,FZ-CZ,time domain,,population variance,V^2
+ch16_rms,16,FZ-CZ,time domain,,sqrt(mean(signal^2)),V
+ch16_energy,16,FZ-CZ,time domain,,sum(signal^2) over window samples,V^2 samples
+ch16_delta_power,16,FZ-CZ,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch16_delta_relative_power,16,FZ-CZ,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch16_theta_power,16,FZ-CZ,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch16_theta_relative_power,16,FZ-CZ,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch16_alpha_power,16,FZ-CZ,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch16_alpha_relative_power,16,FZ-CZ,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch16_beta_power,16,FZ-CZ,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch16_beta_relative_power,16,FZ-CZ,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch16_gamma_power,16,FZ-CZ,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch16_gamma_relative_power,16,FZ-CZ,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch17_mean,17,CZ-PZ,time domain,,mean(signal),V
+ch17_std,17,CZ-PZ,time domain,,population standard deviation,V
+ch17_variance,17,CZ-PZ,time domain,,population variance,V^2
+ch17_rms,17,CZ-PZ,time domain,,sqrt(mean(signal^2)),V
+ch17_energy,17,CZ-PZ,time domain,,sum(signal^2) over window samples,V^2 samples
+ch17_delta_power,17,CZ-PZ,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch17_delta_relative_power,17,CZ-PZ,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch17_theta_power,17,CZ-PZ,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch17_theta_relative_power,17,CZ-PZ,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch17_alpha_power,17,CZ-PZ,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch17_alpha_relative_power,17,CZ-PZ,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch17_beta_power,17,CZ-PZ,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch17_beta_relative_power,17,CZ-PZ,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch17_gamma_power,17,CZ-PZ,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch17_gamma_relative_power,17,CZ-PZ,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch18_mean,18,P7-T7,time domain,,mean(signal),V
+ch18_std,18,P7-T7,time domain,,population standard deviation,V
+ch18_variance,18,P7-T7,time domain,,population variance,V^2
+ch18_rms,18,P7-T7,time domain,,sqrt(mean(signal^2)),V
+ch18_energy,18,P7-T7,time domain,,sum(signal^2) over window samples,V^2 samples
+ch18_delta_power,18,P7-T7,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch18_delta_relative_power,18,P7-T7,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch18_theta_power,18,P7-T7,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch18_theta_relative_power,18,P7-T7,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch18_alpha_power,18,P7-T7,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch18_alpha_relative_power,18,P7-T7,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch18_beta_power,18,P7-T7,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch18_beta_relative_power,18,P7-T7,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch18_gamma_power,18,P7-T7,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch18_gamma_relative_power,18,P7-T7,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch19_mean,19,T7-FT9,time domain,,mean(signal),V
+ch19_std,19,T7-FT9,time domain,,population standard deviation,V
+ch19_variance,19,T7-FT9,time domain,,population variance,V^2
+ch19_rms,19,T7-FT9,time domain,,sqrt(mean(signal^2)),V
+ch19_energy,19,T7-FT9,time domain,,sum(signal^2) over window samples,V^2 samples
+ch19_delta_power,19,T7-FT9,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch19_delta_relative_power,19,T7-FT9,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch19_theta_power,19,T7-FT9,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch19_theta_relative_power,19,T7-FT9,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch19_alpha_power,19,T7-FT9,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch19_alpha_relative_power,19,T7-FT9,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch19_beta_power,19,T7-FT9,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch19_beta_relative_power,19,T7-FT9,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch19_gamma_power,19,T7-FT9,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch19_gamma_relative_power,19,T7-FT9,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch20_mean,20,FT9-FT10,time domain,,mean(signal),V
+ch20_std,20,FT9-FT10,time domain,,population standard deviation,V
+ch20_variance,20,FT9-FT10,time domain,,population variance,V^2
+ch20_rms,20,FT9-FT10,time domain,,sqrt(mean(signal^2)),V
+ch20_energy,20,FT9-FT10,time domain,,sum(signal^2) over window samples,V^2 samples
+ch20_delta_power,20,FT9-FT10,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch20_delta_relative_power,20,FT9-FT10,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch20_theta_power,20,FT9-FT10,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch20_theta_relative_power,20,FT9-FT10,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch20_alpha_power,20,FT9-FT10,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch20_alpha_relative_power,20,FT9-FT10,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch20_beta_power,20,FT9-FT10,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch20_beta_relative_power,20,FT9-FT10,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch20_gamma_power,20,FT9-FT10,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch20_gamma_relative_power,20,FT9-FT10,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch21_mean,21,FT10-T8,time domain,,mean(signal),V
+ch21_std,21,FT10-T8,time domain,,population standard deviation,V
+ch21_variance,21,FT10-T8,time domain,,population variance,V^2
+ch21_rms,21,FT10-T8,time domain,,sqrt(mean(signal^2)),V
+ch21_energy,21,FT10-T8,time domain,,sum(signal^2) over window samples,V^2 samples
+ch21_delta_power,21,FT10-T8,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch21_delta_relative_power,21,FT10-T8,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch21_theta_power,21,FT10-T8,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch21_theta_relative_power,21,FT10-T8,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch21_alpha_power,21,FT10-T8,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch21_alpha_relative_power,21,FT10-T8,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch21_beta_power,21,FT10-T8,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch21_beta_relative_power,21,FT10-T8,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch21_gamma_power,21,FT10-T8,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch21_gamma_relative_power,21,FT10-T8,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction
+ch22_mean,22,T8-P8-1,time domain,,mean(signal),V
+ch22_std,22,T8-P8-1,time domain,,population standard deviation,V
+ch22_variance,22,T8-P8-1,time domain,,population variance,V^2
+ch22_rms,22,T8-P8-1,time domain,,sqrt(mean(signal^2)),V
+ch22_energy,22,T8-P8-1,time domain,,sum(signal^2) over window samples,V^2 samples
+ch22_delta_power,22,T8-P8-1,absolute band power,0.5-4,integral Welch PSD from 0.5 to 4 Hz; interpolated edge bins,V^2
+ch22_delta_relative_power,22,T8-P8-1,relative band power,0.5-4,absolute delta power / total 0.5-80 Hz power,unitless fraction
+ch22_theta_power,22,T8-P8-1,absolute band power,4-8,integral Welch PSD from 4 to 8 Hz; interpolated edge bins,V^2
+ch22_theta_relative_power,22,T8-P8-1,relative band power,4-8,absolute theta power / total 0.5-80 Hz power,unitless fraction
+ch22_alpha_power,22,T8-P8-1,absolute band power,8-13,integral Welch PSD from 8 to 13 Hz; interpolated edge bins,V^2
+ch22_alpha_relative_power,22,T8-P8-1,relative band power,8-13,absolute alpha power / total 0.5-80 Hz power,unitless fraction
+ch22_beta_power,22,T8-P8-1,absolute band power,13-30,integral Welch PSD from 13 to 30 Hz; interpolated edge bins,V^2
+ch22_beta_relative_power,22,T8-P8-1,relative band power,13-30,absolute beta power / total 0.5-80 Hz power,unitless fraction
+ch22_gamma_power,22,T8-P8-1,absolute band power,30-80,integral Welch PSD from 30 to 80 Hz; interpolated edge bins,V^2
+ch22_gamma_relative_power,22,T8-P8-1,relative band power,30-80,absolute gamma power / total 0.5-80 Hz power,unitless fraction

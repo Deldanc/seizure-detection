@@ -1,0 +1,218 @@
+{
+  "protocol": {
+    "horizon_seconds": 1200.0,
+    "sph_seconds": 300.0,
+    "window_seconds": 5.0,
+    "split": {
+      "train": [
+        "chb03_15.edf",
+        "chb03_16.edf",
+        "chb03_17.edf",
+        "chb03_34.edf"
+      ],
+      "validation": [
+        "chb03_35.edf"
+      ],
+      "test": [
+        "chb03_36.edf"
+      ],
+      "training_recordings": 4,
+      "validation_recordings": 1,
+      "test_recordings": 1,
+      "training_rows": 2496,
+      "validation_rows": 458,
+      "test_rows": 289,
+      "positive_windows": {
+        "train": 240,
+        "validation": 240,
+        "test": 240
+      }
+    },
+    "ga_features": [
+      "ch8_std",
+      "ch16_std",
+      "ch17_variance",
+      "ch17_energy"
+    ],
+    "threshold_selected_on_validation": 0.9400000000000002,
+    "class_counts_test": {
+      "negative": 49,
+      "positive": 240
+    }
+  },
+  "ga_anfis_test": {
+    "n_windows": 289,
+    "positive_windows": 240,
+    "threshold": 0.9400000000000002,
+    "accuracy": 0.1903114186851211,
+    "precision": 1.0,
+    "sensitivity": 0.025,
+    "specificity": 1.0,
+    "f1": 0.04878048780487805,
+    "pr_auc_average_precision": 0.8312977262319199,
+    "roc_auc": 0.5057823129251701,
+    "confusion_matrix_tn_fp_fn_tp": [
+      49,
+      0,
+      234,
+      6
+    ],
+    "event_level": {
+      "seizure_events": 1,
+      "successfully_predicted_events": 1,
+      "event_sensitivity": 1.0,
+      "alarms_generated": [
+        545.0
+      ],
+      "matched_alarm_times": [
+        545.0
+      ],
+      "false_alarm_count": 0,
+      "eligible_monitoring_hours": 0.4013888888888889,
+      "false_alarms_per_eligible_hour": 0.0,
+      "warning_lead_times_seconds": [
+        1180.0
+      ],
+      "lead_time_distribution_seconds": {
+        "min": 1180.0,
+        "median": 1180.0,
+        "max": 1180.0
+      },
+      "active_warning_fraction_percent": 40.484429065743946,
+      "warning_active_seconds": 585.0,
+      "alarm_policy": {
+        "consecutive_windows": 3,
+        "refractory_seconds": 1800.0,
+        "event_match": "onset lies from alarm+SPH through alarm+SPH+prediction_horizon"
+      }
+    }
+  },
+  "baselines_test": {
+    "always_interictal": {
+      "n_windows": 289,
+      "positive_windows": 240,
+      "threshold": 0.5,
+      "accuracy": 0.1695501730103806,
+      "precision": 0.0,
+      "sensitivity": 0.0,
+      "specificity": 1.0,
+      "f1": 0.0,
+      "pr_auc_average_precision": 0.8304498269896193,
+      "roc_auc": 0.5,
+      "confusion_matrix_tn_fp_fn_tp": [
+        49,
+        0,
+        240,
+        0
+      ]
+    },
+    "logistic_regression": {
+      "n_windows": 289,
+      "positive_windows": 240,
+      "threshold": 0.7800000000000001,
+      "accuracy": 0.2422145328719723,
+      "precision": 0.8,
+      "sensitivity": 0.11666666666666667,
+      "specificity": 0.8571428571428571,
+      "f1": 0.20363636363636364,
+      "pr_auc_average_precision": 0.8241898994760284,
+      "roc_auc": 0.4562074829931973,
+      "confusion_matrix_tn_fp_fn_tp": [
+        42,
+        7,
+        212,
+        28
+      ]
+    },
+    "random_forest": {
+      "n_windows": 289,
+      "positive_windows": 240,
+      "threshold": 0.5000000000000001,
+      "accuracy": 0.38408304498269896,
+      "precision": 0.8229166666666666,
+      "sensitivity": 0.32916666666666666,
+      "specificity": 0.6530612244897959,
+      "f1": 0.47023809523809523,
+      "pr_auc_average_precision": 0.8378088132154096,
+      "roc_auc": 0.5317176870748299,
+      "confusion_matrix_tn_fp_fn_tp": [
+        32,
+        17,
+        161,
+        79
+      ]
+    }
+  },
+  "ga_search": {
+    "configuration": {
+      "population_size": 10,
+      "generations": 5,
+      "max_features": 4,
+      "mutation_rate": 0.04,
+      "random_state": 42,
+      "selection": "uniform sampling from the top third",
+      "crossover": "uniform",
+      "stopping": "configured generations or 3 stagnant generations",
+      "fitness": "mean recording-grouped CV window F1 minus 0.002 per feature"
+    },
+    "selected_features": [
+      "ch8_std",
+      "ch16_std",
+      "ch17_variance",
+      "ch17_energy"
+    ],
+    "fitness": 0.6930114329243504,
+    "history": [
+      {
+        "generation": 1,
+        "fitness": 0.2772611841363289,
+        "selected_count": 3
+      },
+      {
+        "generation": 2,
+        "fitness": 0.3098665904206832,
+        "selected_count": 4
+      },
+      {
+        "generation": 3,
+        "fitness": 0.5473456272280238,
+        "selected_count": 4
+      },
+      {
+        "generation": 4,
+        "fitness": 0.5473456272280238,
+        "selected_count": 4
+      },
+      {
+        "generation": 5,
+        "fitness": 0.6930114329243504,
+        "selected_count": 4
+      }
+    ],
+    "seed": 42
+  },
+  "model_training": {
+    "objective": "class-balanced binary cross entropy + L2",
+    "optimizer": "L-BFGS (joint premise and consequent gradient updates)",
+    "iterations": 135,
+    "converged": true,
+    "loss": 0.1863618408048607,
+    "membership_functions_per_feature": 2,
+    "rule_count": 16,
+    "consequent": "first-order linear Sugeno"
+  },
+  "outputs": {
+    "predictions_csv": "results/csv/anticipatory_test_predictions.csv",
+    "artifact": "models/anticipatory_ga_anfis.joblib",
+    "risk_plot": "results/plots/anticipatory_test_risk.png",
+    "confusion_plot": "results/plots/anticipatory_test_confusion.png",
+    "metrics_json": "results/csv/anticipatory_evaluation.json"
+  },
+  "limitations": [
+    "Only one subject is locally available.",
+    "The test set contains one annotated seizure event.",
+    "The GA fitness uses five-minute temporal groups within one training seizure recording; this is not independent event validation.",
+    "Scores are not calibrated probabilities; threshold is selected on one validation event by sensitivity, false-alarm count, then window F1.",
+    "The 20-minute horizon and 5-minute SPH are experimental settings, not clinical recommendations."
+  ]
+}

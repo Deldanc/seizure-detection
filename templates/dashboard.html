@@ -8,10 +8,11 @@
 </head>
 <body>
 <header class="topbar">
-  <div class="brand"><span class="brand-mark">N</span><span>NEUROGUARD</span></div>
+  <a class="brand" href="/" aria-label="NeuroGuard home"><span class="brand-mark">N</span><span>NEUROGUARD</span></a>
   <nav>
     <a class="nav-active" href="/">Research</a>
-    <a href="/predict">New Prediction</a>
+    <a href="/predict">Seizure detector</a>
+    <a href="/anticipate">Future risk research</a>
   </nav>
 </header>
 
@@ -19,9 +20,10 @@
   <section class="hero">
     <div class="eyebrow">EEG SEIZURE DETECTION · RESEARCH SYSTEM</div>
     <h1>Research Dashboard</h1>
-    <p>Experimental pipeline, model evaluation, feature selection and event-level results.</p>
+    <p>The existing EDF workflow detects seizure activity. A separate experimental GA–ANFIS route now scores preictal future risk under an explicit horizon and SPH; its one-event test is not clinical evidence.</p>
     <div class="hero-actions">
       <a class="primary-btn" href="/predict">Analyze a new EDF <span>→</span></a>
+      <a class="secondary-btn" href="/anticipate">Try future-risk research</a>
       <span class="status-dot">● Research results</span>
     </div>
   </section>
@@ -29,13 +31,13 @@
   <section class="stats-grid">
     <div class="stat-card"><span>EEG windows</span><strong>5,033</strong><small>5-second windows</small></div>
     <div class="stat-card"><span>Original features</span><strong>230</strong><small>time + frequency domain</small></div>
-    <div class="stat-card"><span>GA selected</span><strong>107</strong><small>selected feature set</small></div>
+    <div class="stat-card"><span>Live GA selected</span><strong>{{ model_info.selected_features|length if model_info else '—' }}</strong><small>inputs used by saved model</small></div>
     <div class="stat-card"><span>Seizure windows</span><strong>45</strong><small>vs 4,988 non-seizure</small></div>
   </section>
 
   <section class="section">
     <div class="section-kicker">01 · DATA & PIPELINE</div>
-    <div class="section-title-row"><div><h2>From raw EEG to seizure events</h2><p>The complete research workflow used in the experiment.</p></div></div>
+    <div class="section-title-row"><div><h2>Live inference pipeline</h2><p>Preprocessing and feature definitions match the saved training data.</p></div></div>
     <div class="pipeline">
       <div><b>01</b><strong>CHB-MIT EEG</strong><span>EDF recordings</span></div>
       <i>→</i>
@@ -43,20 +45,21 @@
       <i>→</i>
       <div><b>03</b><strong>Features</strong><span>230 descriptors</span></div>
       <i>→</i>
-      <div><b>04</b><strong>GA selection</strong><span>107 selected</span></div>
+      <div><b>04</b><strong>GA selection</strong><span>{{ model_info.selected_features|length if model_info else '—' }} selected inputs</span></div>
       <i>→</i>
-      <div><b>05</b><strong>Classifier</strong><span>Random Forest</span></div>
+      <div><b>05</b><strong>Classifier</strong><span>Sugeno ANFIS</span></div>
       <i>→</i>
       <div><b>06</b><strong>Events</strong><span>merge + duration</span></div>
     </div>
 
     <div class="two-col">
       <article class="panel">
-        <div class="panel-head"><h3>Feature extraction</h3><span>230 total</span></div>
+        <div class="panel-head"><h3>Detector feature extraction</h3><span>230 descriptors</span></div>
         <div class="feature-list">
-          <div><strong>Time domain</strong><span>Mean · Std · Variance · RMS · Energy</span></div>
-          <div><strong>Frequency domain</strong><span>Delta · Theta · Alpha · Beta · Gamma power</span></div>
-          <div><strong>Window</strong><span>5 seconds · 256 Hz sampling</span></div>
+          <div><strong>Time-domain features</strong><p>Describe signal size and variation: mean, standard deviation, variance, RMS and energy.</p></div>
+          <div><strong>Frequency bands</strong><p>EEG rhythm ranges: delta 0.5–4 Hz, theta 4–8 Hz, alpha 8–13 Hz, beta 13–30 Hz and gamma 30–100 Hz. Theta and alpha are names for frequency ranges, not separate model classes.</p></div>
+          <div><strong>Which ones are used?</strong><p>The saved detector's GA selects 4 of 230 descriptors. Active inputs: {{ model_info.selected_features|join(", ") if model_info else "model unavailable" }}.</p></div>
+          <div><strong>Window</strong><p>5 seconds · 256 Hz sampling</p></div>
         </div>
       </article>
       <article class="panel">
@@ -70,10 +73,50 @@
     </div>
   </section>
 
+  {% if evaluation %}
   <section class="section">
-    <div class="section-kicker">02 · MODEL EVALUATION</div>
+    <div class="section-kicker">LIVE MODEL · RECORDING-LEVEL EVALUATION</div>
+    <div class="section-title-row"><div><h2>GA–ANFIS held-out results</h2><p>Threshold selected on recording chb03_35.edf; test recordings chb03_17.edf and chb03_36.edf remained isolated until final scoring.</p></div><span class="tag">{{ evaluation.split.counts.test }} TEST WINDOWS · {{ evaluation.split.positive_windows.test }} POSITIVE</span></div>
+    <div class="metric-grid priority-metrics">
+      <div class="metric-card"><span>Accuracy</span><strong>{{ "%.1f"|format(evaluation.test.ga_anfis.accuracy*100) }}%</strong></div>
+      <div class="metric-card"><span>Precision</span><strong>{{ "%.1f"|format(evaluation.test.ga_anfis.precision*100) }}%</strong></div>
+      <div class="metric-card"><span>Sensitivity</span><strong>{{ "%.1f"|format(evaluation.test.ga_anfis.sensitivity*100) }}%</strong></div>
+      <div class="metric-card"><span>Specificity</span><strong>{{ "%.1f"|format(evaluation.test.ga_anfis.specificity*100) }}%</strong></div>
+      <div class="metric-card"><span>F1</span><strong>{{ "%.3f"|format(evaluation.test.ga_anfis.f1) }}</strong></div>
+      <div class="metric-card"><span>RF baseline F1</span><strong>{{ "%.3f"|format(evaluation.test.random_forest_same_features.f1) }}</strong></div>
+    </div>
+    <p class="chart-note">Window-level test: 11 positive windows from one annotated seizure event in one patient. Exploratory event pass: {{ evaluation.test.event_level.ga_anfis.detected_events }}/{{ evaluation.test.event_level.ga_anfis.ground_truth_events }} events detected; {{ evaluation.test.event_level.ga_anfis.false_alarm_events }} false alarm events ({{ "%.2f"|format(evaluation.test.event_level.ga_anfis.false_alarms_per_hour) }} per covered recording hour). Scores are uncalibrated; onset offsets do not represent preictal warning latency. This is not clinical validation.</p>
+  </section>
+  {% endif %}
+
+  {% if anticipatory_evaluation %}
+  {% set pred = anticipatory_evaluation.ga_anfis_test %}
+  {% set event = pred.event_level %}
+  <section class="section">
+    <div class="section-kicker">EXPERIMENTAL FUTURE-RISK PREDICTION · SEPARATE MODEL</div>
     <div class="section-title-row">
-      <div><h2>Recall and F1 first</h2><p>Held-out window-level results. Accuracy is shown for completeness, but class imbalance makes it an unreliable headline metric.</p></div>
+      <div><h2>Does it predict ahead?</h2><p>Yes, this separate GA–ANFIS route issues a warning for a defined future interval. It does not detect current seizure activity. The results below are from held-out recording chb03_36.edf.</p></div>
+      <span class="tag">{{ anticipatory_evaluation.protocol.split.test_rows }} TEST WINDOWS · {{ anticipatory_evaluation.protocol.split.positive_windows.test }} PREICTAL</span>
+    </div>
+    <div class="metric-grid priority-metrics">
+      <div class="metric-card"><span>Threshold</span><strong>{{ "%.2f"|format(pred.threshold) }}</strong><small>selected using validation recording</small></div>
+      <div class="metric-card"><span>Window sensitivity</span><strong>{{ "%.1f"|format(pred.sensitivity * 100) }}%</strong><small>{{ pred.confusion_matrix_tn_fp_fn_tp[3] }} of {{ pred.positive_windows }} preictal windows detected</small></div>
+      <div class="metric-card"><span>Window F1</span><strong>{{ "%.3f"|format(pred.f1) }}</strong><small>precision {{ "%.1f"|format(pred.precision * 100) }}%</small></div>
+      <div class="metric-card"><span>ROC-AUC</span><strong>{{ "%.3f"|format(pred.roc_auc) }}</strong><small>0.5 is chance-level ranking</small></div>
+      <div class="metric-card"><span>Random forest baseline F1</span><strong>{{ "%.3f"|format(anticipatory_evaluation.baselines_test.random_forest.f1) }}</strong><small>same held-out windows; above ANFIS F1</small></div>
+      <div class="metric-card"><span>Events matched</span><strong>{{ event.successfully_predicted_events }}/{{ event.seizure_events }}</strong><small>one held-out seizure event</small></div>
+      <div class="metric-card"><span>False alarms</span><strong>{{ event.false_alarm_count }}</strong><small>over {{ "%.3f"|format(event.eligible_monitoring_hours) }} eligible hours</small></div>
+    </div>
+    <p class="chart-note">Protocol: 5-second windows, {{ (anticipatory_evaluation.protocol.horizon_seconds / 60)|int }}-minute future horizon after a {{ (anticipatory_evaluation.protocol.sph_seconds / 60)|int }}-minute SPH. {% if event.warning_lead_times_seconds %}The single event was matched {{ "%.1f"|format(event.warning_lead_times_seconds[0] / 60) }} minutes after its alarm.{% else %}No alarm matched the held-out event.{% endif %} Window sensitivity is low and ROC-AUC is near chance. This one-event result does not establish reliable prediction or an advantage over baselines. Scores are uncalibrated and the model is not clinically validated.</p>
+    <p class="chart-note">Anticipatory schema v3: 345 candidates, including absolute and relative power; its gamma band is 30–80 Hz. GA-selected inputs: <code>{{ anticipatory_evaluation.protocol.ga_features|join(", ") }}</code></p>
+    <a class="secondary-btn" href="/anticipate">Open future-risk analysis →</a>
+  </section>
+  {% endif %}
+
+  <section class="section">
+    <div class="section-kicker">ARCHIVED · PRIOR MODEL EXPERIMENTS</div>
+    <div class="section-title-row">
+      <div><h2>Recall and F1 first</h2><p>Previously reported results from an older model experiment and split; these are not the GA–ANFIS metrics shown above. Accuracy is included for context.</p></div>
       <span class="tag">TEST SET · 1,007 WINDOWS</span>
     </div>
 
@@ -205,7 +248,7 @@
   <section class="section">
     <div class="section-kicker">05 · EVENT-LEVEL ANALYSIS</div>
     <div class="section-title-row">
-      <div><h2>Baseline vs GA + ANFIS</h2><p>Same reported event-level evaluation, presented without collapsing different metrics into a single score.</p></div>
+      <div><h2>Earlier event-level experiment</h2><p>These archived figures are from a prior experiment and are not results for the live model reported above.</p></div>
       <span class="tag">n=4 EVENTS · PATIENT 3</span>
     </div>
     <div class="comparison-wrap">

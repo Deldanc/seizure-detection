@@ -7,9 +7,7 @@ from scipy.integrate import trapezoid
 from scipy.signal import welch
 
 ROOT = Path(__file__).resolve().parents[1]
-MODEL_PATH = ROOT / "models" / "neuroguard_rf.joblib"
-SCALER_PATH = ROOT / "models" / "neuroguard_scaler.joblib"
-SELECTED_PATH = ROOT / "models" / "selected_features.txt"
+MODEL_PATH = ROOT / "models" / "ga_anfis_artifact.joblib"
 
 WINDOW_SEC = 5.0
 DEFAULT_THRESHOLD = 0.50
@@ -17,24 +15,36 @@ DEFAULT_MERGE_GAP_SEC = 30.0
 DEFAULT_MIN_DURATION_SEC = 10.0
 BANDS = {
     "delta": (0.5, 4.0), "theta": (4.0, 8.0), "alpha": (8.0, 13.0),
-    "beta": (13.0, 30.0), "gamma": (30.0, 45.0),
+    "beta": (13.0, 30.0), "gamma": (30.0, 100.0),
 }
 
 
 def _load_artifacts():
     if not MODEL_PATH.exists():
-        raise FileNotFoundError(f"Missing model: {MODEL_PATH}")
-    if not SCALER_PATH.exists():
-        raise FileNotFoundError(f"Missing scaler: {SCALER_PATH}")
-    if not SELECTED_PATH.exists():
-        raise FileNotFoundError(f"Missing selected feature list: {SELECTED_PATH}")
-    return joblib.load(MODEL_PATH), joblib.load(SCALER_PATH), [x.strip() for x in SELECTED_PATH.read_text().splitlines() if x.strip()]
+        raise FileNotFoundError(
+            "GA–ANFIS artifact is missing. Train it with .venv/bin/python "
+            "src/models/train_ga_anfis.py."
+        )
+    artifact = joblib.load(MODEL_PATH)
+    required = {"format_version", "model_id", "model", "scaler", "selected_features"}
+    if not isinstance(artifact, dict) or not required.issubset(artifact):
+        raise ValueError(f"Incompatible GA–ANFIS artifact: {MODEL_PATH}")
+    selected = artifact["selected_features"]
+    if (not selected or len(selected) != artifact["scaler"].n_features_in_
+            or len(selected) != artifact["model"].n_features_in_):
+        raise ValueError("GA–ANFIS feature list, scaler, and model dimensions do not match.")
+    return artifact
 
 
-def _bandpower(x, sf, low, high):
-    freqs, psd = welch(x, fs=sf, nperseg=min(len(x), int(sf * 2)))
-    mask = (freqs >= low) & (freqs <= high)
-    return float(trapezoid(psd[mask], freqs[mask])) if np.any(mask) else 0.0
+def get_default_threshold():
+    return float(_load_artifacts().get("threshold", DEFAULT_THRESHOLD))
+
+
+def get_model_info():
+    artifact = _load_artifacts()
+    return {"model_id": artifact["model_id"],
+            "selected_features": list(artifact["selected_features"]),
+            "threshold": float(artifact.get("threshold", DEFAULT_THRESHOLD))}
 
 
 def _extract_window_features(data, sf):
@@ -51,10 +61,11 @@ def _extract_window_features(data, sf):
 
         # Welch output is shared by every frequency band for this channel.
         # Slice its contiguous bins directly to avoid allocating band masks.
-        freqs, psd = welch(x, fs=sf, nperseg=min(len(x), int(sf * 2)))
+        # Match the default Welch parameters in src/preprocessing/features.py.
+        freqs, psd = welch(x, fs=sf)
         for band, (lo, hi) in BANDS.items():
             first = int(np.searchsorted(freqs, lo, side="left"))
-            stop = int(np.searchsorted(freqs, hi, side="right"))
+            stop = int(np.searchsorted(freqs, hi, side="left"))
             values[f"{prefix}_{band}_power"] = (
                 float(trapezoid(psd[first:stop], freqs[first:stop]))
                 if first < stop else 0.0
@@ -67,14 +78,14 @@ def _merge_events(intervals, merge_gap_sec, min_duration_sec):
         return []
     intervals = sorted(intervals)
     merged = [list(intervals[0])]
-    for start, end, confidence in intervals[1:]:
+    for start, end, score in intervals[1:]:
         if start - merged[-1][1] <= merge_gap_sec:
             merged[-1][1] = max(merged[-1][1], end)
-            merged[-1][2] = max(merged[-1][2], confidence)
+            merged[-1][2] = max(merged[-1][2], score)
         else:
-            merged.append([start, end, confidence])
+            merged.append([start, end, score])
     return [
-        {"start": round(s, 2), "end": round(e, 2), "duration": round(e-s, 2), "confidence": round(c, 4)}
+        {"start": round(s, 2), "end": round(e, 2), "duration": round(e-s, 2), "score": round(c, 4)}
         for s, e, c in merged if e - s >= min_duration_sec
     ]
 
@@ -162,8 +173,18 @@ def validate_edf(edf_path):
     if not path.exists():
         raise FileNotFoundError("EDF file was not found.")
 
-    _, _, selected = _load_artifacts()
+    artifact = _load_artifacts()
+    selected = artifact["selected_features"]
     info = _read_edf_header(path)
+
+    expected = artifact.get("feature_metadata", {}).get("channel_names", [])
+    normalized = [name.strip().upper() for name in info["channel_names"]]
+    generic = [f"EEG{i:02d}" for i in range(1, len(expected) + 1)]
+    if expected and normalized not in ([name.upper() for name in expected], generic):
+        raise ValueError(
+            "This EDF channel layout or order does not match the model's CHB-MIT training layout. "
+            "Use the same 23-channel order or a supported sequential EEG01–EEG23 layout."
+        )
 
     required = [
         int(x.split("_")[0][2:])
@@ -187,8 +208,17 @@ def validate_edf(edf_path):
     }
 
 
-def predict_edf(edf_path, threshold=DEFAULT_THRESHOLD, merge_gap_sec=DEFAULT_MERGE_GAP_SEC, min_duration_sec=DEFAULT_MIN_DURATION_SEC):
-    model, scaler, selected = _load_artifacts()
+def predict_edf(edf_path, threshold=None, merge_gap_sec=DEFAULT_MERGE_GAP_SEC, min_duration_sec=DEFAULT_MIN_DURATION_SEC):
+    artifact = _load_artifacts()
+    model, scaler, selected = artifact["model"], artifact["scaler"], artifact["selected_features"]
+    info = _read_edf_header(edf_path)
+    expected = artifact.get("feature_metadata", {}).get("channel_names", [])
+    normalized = [name.strip().upper() for name in info["channel_names"]]
+    generic = [f"EEG{i:02d}" for i in range(1, len(expected) + 1)]
+    if expected and normalized not in ([name.upper() for name in expected], generic):
+        raise ValueError("EDF channel names/order do not match the model's trained feature layout.")
+    if threshold is None:
+        threshold = artifact.get("threshold", DEFAULT_THRESHOLD)
     threshold = float(np.clip(threshold, 0.01, 0.99))
     merge_gap_sec = float(max(0, merge_gap_sec))
     min_duration_sec = float(max(0, min_duration_sec))
@@ -257,11 +287,13 @@ def predict_edf(edf_path, threshold=DEFAULT_THRESHOLD, merge_gap_sec=DEFAULT_MER
             raw_intervals.append((start, min(start + WINDOW_SEC, total_seconds), float(prob)))
     events = _merge_events(raw_intervals, merge_gap_sec, min_duration_sec)
 
-    windows = [{"start": round(float(s), 2), "end": round(min(float(s + WINDOW_SEC), total_seconds), 2), "probability": round(float(p), 6), "prediction": int(p >= threshold)} for s, p in zip(starts, probabilities)]
+    windows = [{"start": round(float(s), 2), "end": round(min(float(s + WINDOW_SEC), total_seconds), 2), "score": round(float(p), 6), "prediction": int(p >= threshold)} for s, p in zip(starts, probabilities)]
     return {
         "filename": Path(edf_path).name, "windows_analyzed": int(n_windows), "positive_windows": int(positive.sum()),
-        "peak_probability": float(probabilities.max()), "detected_events": len(events), "events": events,
+        "peak_score": float(probabilities.max()), "detected_events": len(events), "events": events,
         "threshold": threshold, "window_sec": WINDOW_SEC, "merge_gap_sec": merge_gap_sec,
         "min_duration_sec": min_duration_sec, "sampling_frequency": sf, "duration_sec": total_seconds,
         "channels": int(n_channels), "windows": windows, "job_id": uuid.uuid4().hex,
+        "model_id": artifact["model_id"], "score_type": "uncalibrated seizure score",
+        "selected_feature_count": len(selected),
     }

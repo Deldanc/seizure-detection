@@ -1,0 +1,8 @@
+{
+  "window_seconds": 5.0,
+  "step_seconds": 5.0,
+  "prediction_horizon_seconds": 1200.0,
+  "sph_seconds": 300.0,
+  "postictal_exclusion_seconds": 1800.0,
+  "interictal_guard_seconds": 0.0
+}
