@@ -12,12 +12,12 @@ from src.preprocessing.anticipatory_pipeline import (causal_filter, feature_row,
     PREDICTION_HORIZON_SEC, SPH_SEC)
 
 ROOT = Path(__file__).resolve().parents[1]
-MODEL_PATH = ROOT / "models" / "anticipatory_ga_anfis_featureaudit_v4.joblib"
+MODEL_PATH = ROOT / "models" / "anticipatory_theta_alpha_event_v1.joblib"
 
 
 def load_artifact():
     if not MODEL_PATH.exists():
-        raise FileNotFoundError("Anticipatory GA–ANFIS feature audit model is not trained. Run data preparation and then src/models/train_anticipatory.py.")
+        raise FileNotFoundError("Anticipatory ANFIS candidate is unavailable. Run src.models.evaluate_theta_alpha_candidate to create the versioned research artifact.")
     artifact = joblib.load(MODEL_PATH)
     required = {"model", "scaler", "selected_features", "threshold", "channel_names",
                 "feature_names", "feature_schema_version", "sampling_frequency_hz",
@@ -35,25 +35,11 @@ def load_artifact():
     return artifact
 
 
-def _anticipatory_channel_indices(actual_names, expected_names):
-    """Resolve named CHB03 montage channels or the project's sequential EEG aliases.
-
-    The bundled sample uses EEG01..EEG23 labels in the canonical CHB03 channel
-    order. Preserve the same positional alias already accepted by the detector;
-    arbitrary or partial channel sets still fail strict montage validation.
-    """
-    normalized = [name.strip().upper() for name in actual_names]
-    sequential_aliases = [f"EEG{i:02d}" for i in range(1, len(expected_names) + 1)]
-    if normalized == sequential_aliases:
-        return list(range(len(expected_names)))
-    return _channel_indices(list(actual_names), list(expected_names))
-
-
 def validate_anticipatory_edf(edf_path):
     artifact = load_artifact()
     raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose="ERROR")
     try:
-        channel_indices = _anticipatory_channel_indices(list(raw.ch_names), artifact["channel_names"])
+        channel_indices = _channel_indices(list(raw.ch_names), artifact["channel_names"])
         input_sfreq = float(raw.info["sfreq"])
         if input_sfreq * 0.45 <= 80:
             raise ValueError("EDF sampling rate must be at least 177.78 Hz to retain the trained 30-80 Hz gamma band through filtering.")
@@ -146,6 +132,7 @@ def predict_anticipatory_edf(edf_path, threshold=None):
         "threshold_source": threshold_source,
         "prediction_horizon_seconds": artifact.get("prediction_horizon_seconds", PREDICTION_HORIZON_SEC),
         "sph_seconds": artifact.get("sph_seconds", SPH_SEC), "window_sec": artifact.get("window_seconds", WINDOW_SEC),
+        "confirm_windows": artifact.get("confirm_windows", 3),
         "step_sec": artifact.get("step_seconds", artifact.get("window_seconds", WINDOW_SEC)),
         "windows_analyzed": len(windows), "peak_score": float(np.max(scores)),
         "warning_events": warning_events, "warning_count": len(warning_events),

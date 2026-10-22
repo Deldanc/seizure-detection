@@ -2,8 +2,16 @@
 
 **Audit date:** 2026-10-22
 **Project:** Development of a Neuro-Fuzzy-Genetic Hybrid Framework for Anticipatory Seizure Prediction
-**Active anticipatory artifact:** `models/anticipatory_ga_anfis_featureaudit_v4.joblib`
+**Original GA artifact:** `models/anticipatory_ga_anfis_featureaudit_v4.joblib`
+
+**Current event-focused route artifact:** `models/anticipatory_theta_alpha_event_v1.joblib`
 **Overall verdict: PARTIALLY IMPLEMENTED.** The repository contains a functioning, causal, annotation-based future-risk pipeline that uses a GA-selected feature list and a genuinely trained Sugeno ANFIS. The final held-out seizure was not predicted, however, and the available data cannot support a reliable event-independent or patient-independent performance claim. Treat this as an experimental research implementation, not a demonstrated successful seizure predictor.
+
+**Later experiment:** the active route now uses the validation-selected theta/alpha ANFIS candidate described in [`event_focused_candidate.md`](event_focused_candidate.md). It issued a warning 440 seconds before the previously examined CHB03_36 onset, but only 1/240 preictal windows crossed threshold. This one historical event does not overturn the audit's no-reliable-performance conclusion.
+
+**Research document availability:** No thesis, proposal, or research paper was present in the repository during this audit. The implementation and reports were checked against the research title and task specification supplied in this session; no external research document was edited.
+
+**Original baseline claim verified:** The repository does contain a legacy 107-input `RandomForestClassifier` in `models/neuroguard_rf.joblib`, matching 107 lines in `models/selected_features.txt`. The active `/predict` route instead loads the four-input Sugeno ANFIS `models/ga_anfis_artifact.joblib`; `/anticipate` loads the separate v4 Sugeno ANFIS. These are distinct models and tasks.
 
 ## Requirement checklist
 
@@ -18,7 +26,7 @@
 | Genuine ANFIS and artifact integration | The saved model is `src.models.ga_anfis.SugenoANFIS`: two Gaussian memberships per feature, 16 product fuzzy rules for four features, normalized rule firing, first-order linear Sugeno consequents, and joint premise/consequent optimization. Inspection found an objective/gradient mismatch in v3. The L2 term is now included in the scalar loss as well as its gradient; v4 converges in 102 L-BFGS iterations (projected-gradient norm `1.85e-5`). v2/v3 outputs were retained in the archive. | PASS for v4 model; v3 retained as historical |
 | Ordered feature list and inference preprocessing | `inference/anticipatory_predictor.py::load_artifact` verifies schema, unique/available feature names and equal model/scaler/list dimensions. v4 has 4 inputs in all three. Training and inference call the same causal resampler, filter and feature extractor. Real-EDF upload scores match the held-out CSV to maximum absolute difference `5.77e-13`. | PASS |
 | Warning policy and timestamps | Risk is scored per completed five-second window. Three consecutive threshold crossings issue a warning at the third window end; 30-minute refractory suppression applies. The warning interval is `[alarm+5 min, alarm+25 min]`; event matching uses the same SPH-plus-horizon limits. Alarms are evaluated across the full timeline, while window metrics use eligible labels. | PASS for retrospective protocol |
-| Flask upload, result page and export | A Flask test-client integration uploaded the real `data/raw/chb03_36.edf`, processed it with the active v4 artifact, rendered the result page, and exported 720 window rows with timestamps, scores, predictions and warning columns. The Flask server also launched on 127.0.0.1:5012 and the dashboard returned HTTP 200 over loopback. Invalid suffix/malformed EDF requests return 400; missing model returns 503. `/anticipate` does not fall back to the current-activity detector. The UI documents horizon/SPH, score meaning, research limits, channel mapping and supported rates. | PASS for upload workflow |
+| Flask upload, result page and export | A Flask test-client integration uploaded the real `data/raw/chb03_36.edf`, processed it with the active v4 artifact, rendered the result page, and exported 720 window rows with timestamps, scores, predictions and warning columns. The Future risk sample action now uses this same actual held-out EDF; its output is a demo, not an independent evaluation. The generic-label `sample/chb03_36_sample.edf` remains limited to the separate current-activity detector and is rejected by `/anticipate`. The Flask server also launched on 127.0.0.1:5012 and the dashboard returned HTTP 200 over loopback. Invalid suffix/malformed EDF requests return 400; missing model returns 503. `/anticipate` does not fall back to the current-activity detector. The UI documents horizon/SPH, score meaning, research limits, channel mapping and supported rates. | PASS for upload workflow |
 | Dependencies and reproducibility | `requirements_web.txt` had incompatible NumPy bounds and a malformed final dependency line; it is now aligned with `requirements.txt` plus Gunicorn. `.venv/bin/python -m pip check` reported no broken requirements. Seeds, GA configuration/history, scaler, selected list, channels, schema, bands, filters, resampling, split, threshold and warning settings are stored/documented. | PASS for current environment |
 | Predictive performance | Held-out test predictions were independently recomputed from `results/csv/anticipatory_featureaudit_v4_predictions.csv`; see evidence below. | FAIL for a successful prediction claim |
 | Patient/event generalization | Only one subject and one usable complete seizure event in each train, validation and test are available. | BLOCKED by available data |
@@ -47,6 +55,7 @@
 - Corrected the Sugeno ANFIS objective so its L2 penalty matches the analytic gradient. Saved v4 optimizer metadata includes status, gradient norm and convergence. The prior v3 model and reports remain preserved under `archive/anticipatory_pre_feature_audit_20261022/schema_v3_pre_optimizer_fix/`.
 - Repointed `/anticipate`, dashboard evaluation data, README outputs and tests to v4.
 - Corrected the anticipatory upload-page text: channel order is matched by name and supported input rates are resampled to 256 Hz, rather than requiring exactly 256 Hz and exact channel order.
+- Routed the Future risk sample button to the actual held-out `chb03_36.edf`; rejected the generic-label detector demo from anticipatory inference after checking it did not correspond to the named CHB03 montage.
 - Fixed `requirements_web.txt` dependency conflicts and malformed concatenated line.
 - Added frequency-range tone checks, ANFIS convergence/scaler checks, real EDF upload/result/CSV integration coverage, malformed-file handling, and missing-model/no-fallback checks.
 - Recomputed held-out window metrics independently from the saved v4 CSV and updated evaluation/audit documentation. No performance improvement is claimed.
@@ -55,7 +64,9 @@
 
 Dataset preparation produced **5,040 windows** from seven local recordings; **3,520 windows** have usable labels (720 preictal and 2,800 interictal). The recording split contains four training recordings (2,496 eligible windows, 240 positive), one validation recording (458 eligible, 240 positive), and one test recording (289 eligible, 240 positive). This is **one patient**; train/validation/test each contain one full-history seizure event.
 
-At validation-selected threshold **0.89**, the v4 test confusion counts are TN/FP/FN/TP = **16/33/89/151**. Independently recomputed window metrics: precision **0.821**, sensitivity **0.629**, specificity **0.327**, F1 **0.712**, average precision **0.756**, ROC-AUC **0.373**. Event-level result: **0/1** seizures predicted, **2 false alarms per 1.000 recording hour** (4.983 per eligible hour), and **no matched warning lead time**. The model's high window sensitivity must not be presented alone; the event was missed and its specificity/ranking are poor.
+At validation-selected threshold **0.89**, the v4 test confusion counts are TN/FP/FN/TP = **16/33/89/151**. Independently recomputed window metrics: accuracy **0.578**, precision **0.821**, sensitivity **0.629**, specificity **0.327**, F1 **0.712**, average precision **0.756**, ROC-AUC **0.373**. Event-level result: **0/1** seizures predicted, **1 pre-onset false alarm per 1.000 recording hour** (2.491 per eligible hour), one late alert 255 seconds after onset, and **no matched warning lead time**. The earlier report counted the late alert as a false alarm; event reporting now separates it. See `reports/model_diagnostics.md` for independent label/score reconstruction and the warning timeline. The model's high window sensitivity must not be presented alone; the event was missed and its specificity/ranking are poor.
+
+On the same 289 held-out eligible windows, logistic regression achieved accuracy 0.661, F1 0.785, average precision 0.801, and ROC-AUC 0.454 at a validation-selected threshold of 0.70. Random Forest achieved 0.464, 0.587, 0.828, and 0.458 respectively at threshold 0.84. The always-interictal baseline had accuracy 0.170 and average precision 0.830 (the test positive prevalence). These comparisons do not establish a useful ranker: all learned models have ROC-AUC below 0.5 on this test, and GA–ANFIS missed the held-out event. Baseline alarm-level results were not saved and are not claimed.
 
 Validation subset comparison is in `reports/feature_selection_report.md`. On its one event, the GA subset had window F1 0.169 / ROC-AUC 0.167 and one false alarm; the retrained existing detector quartet had F1 0.296 / ROC-AUC 0.818 and zero false alarms; the theta+alpha absolute pair had F1 0.315 / ROC-AUC 0.842 and zero false alarms. Each reported 1/1 event hit, but these one-event results are unstable and were not used to replace the training-CV GA winner.
 
@@ -65,13 +76,13 @@ Executed successfully:
 
 ```sh
 MPLCONFIGDIR=/private/tmp/mplconfig .venv/bin/python -m unittest discover -s tests -v
-# Ran 25 tests; OK (3.9 seconds on this environment)
+# Ran 26 tests; OK (3.8 seconds on this environment)
 
 .venv/bin/python -m pip check
 # No broken requirements found
 ```
 
-The 25 tests include label boundaries, annotation parsing, disjoint recording splits, frequency-band dominance, candidate catalog/channel mapping, causal filter/resampler prefix invariance, GA reproducibility, ANFIS rule firing and save/load, trained artifact convergence and scaler fit, real EDF upload/result/CSV, malformed inputs, missing model behavior, and dashboard rendering.
+The 26 tests include label boundaries, annotation parsing, disjoint recording splits, frequency-band dominance, candidate catalog/channel mapping, causal filter/resampler prefix invariance, GA reproducibility, ANFIS rule firing and save/load, trained artifact convergence and scaler fit, real EDF upload/result/CSV, the held-out real-EDF sample route, generic-channel rejection, malformed inputs, missing model behavior, and dashboard rendering.
 
 Reproduction and launch from the project root:
 

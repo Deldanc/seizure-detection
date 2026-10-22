@@ -1,0 +1,43 @@
+{
+  "n_windows": 289,
+  "positive_windows": 240,
+  "threshold": 0.8900000000000002,
+  "accuracy": 0.5778546712802768,
+  "precision": 0.8206521739130435,
+  "sensitivity": 0.6291666666666667,
+  "specificity": 0.32653061224489793,
+  "f1": 0.7122641509433962,
+  "pr_auc_average_precision": 0.7555426290923771,
+  "roc_auc": 0.3734693877551021,
+  "confusion_matrix_tn_fp_fn_tp": [
+    16,
+    33,
+    89,
+    151
+  ],
+  "reversed_score_roc_auc_diagnostic_only": 0.6265306122448979,
+  "score_orientation": "class 1 is documented preictal; predict_proba column 1 is used",
+  "class_counts": {
+    "negative": 49,
+    "positive": 240
+  },
+  "positive_prevalence": 0.8304498269896193,
+  "score_reproduction_max_abs_delta": 1.1102230246251565e-16,
+  "label_reconstruction_mismatches": 0,
+  "test_scores_by_label": {
+    "0": {
+      "n": 49,
+      "mean": 0.8023122377067202,
+      "median": 0.9489405772371224,
+      "q25": 0.6207077080847712,
+      "q75": 0.9627394899098476
+    },
+    "1": {
+      "n": 240,
+      "mean": 0.7543239987328455,
+      "median": 0.9253909187517233,
+      "q25": 0.5563691865023283,
+      "q75": 0.9482212447286867
+    }
+  }
+}

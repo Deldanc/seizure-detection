@@ -10,7 +10,7 @@ The Flask `/anticipate` route was exercised with an actual local EDF. It produce
 
 ## Remaining gaps
 
-- The held-out chb03_36 seizure was missed: 0/1 event hits, two false alarms, and no warning lead time. The score pipeline is anticipatory in its labels and warning horizon, but predictive success was not demonstrated.
+- The held-out chb03_36 seizure was missed: 0/1 event hits, one pre-onset false alarm, one late alert, and no warning lead time. The score pipeline is anticipatory in its labels and warning horizon, but predictive success was not demonstrated. The late alert is no longer mislabeled as a prospective false alarm.
 - The local data are one patient and seven one-hour EDFs. EDFs 02/03/04 are missing; only one complete event is available in each train, validation, and test. Patient-independent and reliable event-independent evaluation are blocked by data availability.
 - GA fitness is grouped-CV Random Forest F1 on training blocks, not ANFIS validation performance. The validation file is used for subset comparisons and threshold selection; using its single event to select features as well would double-use that event. Independent validation recordings/events are needed.
 - The held-out eligible windows are 83% preictal and contain only 49 negatives. This short eligible interictal period makes window metrics a poor proxy for sustained monitoring performance.

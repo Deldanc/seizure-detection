@@ -23,12 +23,13 @@ from src.models.train_anticipatory import TRAIN, VALIDATION, TEST
 
 
 class AnticipatoryProtocolTests(unittest.TestCase):
-    def test_dashboard_loads_separate_v4_prediction_evaluation(self):
+    def test_dashboard_loads_validation_selected_event_candidate(self):
         from app import app
         response = app.test_client().get("/")
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"EXPERIMENTAL FUTURE-RISK PREDICTION", response.data)
-        self.assertIn(b"GA-selected inputs", response.data)
+        self.assertIn(b"ch14_theta_power, ch14_alpha_power", response.data)
+        self.assertIn(b"3 warnings across two one-hour CHB01 recordings", response.data)
         self.assertIn("30–80".encode(), response.data)
 
     def test_summary_annotations_are_recording_relative_and_correct(self):
@@ -46,11 +47,30 @@ class AnticipatoryProtocolTests(unittest.TestCase):
         finally:
             raw.close()
 
-    def test_anticipatory_inference_checks_layout_and_rejects_synthetic_generic_channels(self):
+    def test_anticipatory_inference_accepts_real_montage_and_rejects_generic_labels(self):
         info = validate_anticipatory_edf(Path("data/raw/chb03_36.edf"))
         self.assertTrue(info["compatible"])
         with self.assertRaisesRegex(ValueError, "channel layout mismatch"):
             validate_anticipatory_edf(Path("sample/chb03_36_sample.edf"))
+
+    def test_future_risk_sample_endpoint_uses_real_heldout_edf(self):
+        from app import app
+        with patch("app.predict_anticipatory_edf", return_value={
+            "job_id": "sample-route-test", "prediction_horizon_seconds": 1200
+        }) as predict, patch("app._save_result", return_value="sample-route-test"):
+            page = app.test_client().get("/anticipate")
+            self.assertIn(b'href="/anticipate/sample"', page.data)
+            response = app.test_client().get("/anticipate/sample")
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers["Location"], "/anticipatory-result/sample-route-test")
+        self.assertEqual(Path(predict.call_args.args[0]).resolve(), Path("data/raw/chb03_36.edf").resolve())
+
+        with patch("app.predict_anticipatory_edf", return_value={
+            "job_id": "sample-api-test", "prediction_horizon_seconds": 1200
+        }) as predict, patch("app._save_result", return_value="sample-api-test"):
+            response = app.test_client().post("/api/anticipate", data={"use_sample": "1"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Path(predict.call_args.args[0]).resolve(), Path("data/raw/chb03_36.edf").resolve())
 
     def test_preictal_boundary_sph_and_ictal_never_positive(self):
         onset, offset = 1982.0, 2029.0
@@ -189,7 +209,7 @@ class AnticipatoryProtocolTests(unittest.TestCase):
         self.assertEqual(result["successfully_predicted_events"], 1)
         self.assertEqual(result["warning_lead_times_seconds"], [1180.0])
 
-    def test_event_evaluation_counts_live_alarm_on_unlabeled_full_timeline(self):
+    def test_event_evaluation_separates_post_onset_alert_from_false_alarm(self):
         times = np.arange(5, 3600, 5, dtype=float)
         eligible = np.ones(len(times), dtype=int)
         eligible[(times >= 1990) & (times <= 2010)] = 0
@@ -199,7 +219,9 @@ class AnticipatoryProtocolTests(unittest.TestCase):
         scores = np.zeros(len(frame))
         scores[(times >= 2000) & (times <= 2010)] = .99
         result = event_evaluation(frame, scores, .9)
-        self.assertEqual(result["false_alarm_count"], 1)
+        self.assertEqual(result["false_alarm_count"], 0)
+        self.assertEqual(result["late_or_ictal_alarm_count"], 1)
+        self.assertEqual(result["successfully_predicted_events"], 0)
         self.assertGreater(result["total_monitoring_hours"], result["eligible_monitoring_hours"])
 
     def test_flask_prediction_endpoint_uses_model_output_and_csv_fields(self):
@@ -232,7 +254,7 @@ class AnticipatoryProtocolTests(unittest.TestCase):
         (CACHE_DIR / "unit-test-anticipatory.json").unlink(missing_ok=True)
 
     def test_real_edf_upload_runs_active_anticipatory_model_and_csv_export(self):
-        from app import app
+        from app import app, _load_result
         source = Path("data/raw/chb03_36.edf")
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -245,9 +267,20 @@ class AnticipatoryProtocolTests(unittest.TestCase):
                         "edf_file": (edf, source.name)}, content_type="multipart/form-data")
                 self.assertEqual(response.status_code, 200, response.get_data(as_text=True))
                 result_url = response.json["result_url"]
+                result_id = result_url.rsplit("/", 1)[-1]
+                result = _load_result(result_id)
+                self.assertEqual(result["model_id"], "event-focused theta-alpha Sugeno ANFIS v1")
+                self.assertEqual(result["warning_count"], 1)
+                self.assertEqual(result["warning_events"][0]["generated_at"], 1285.0)
+                self.assertEqual(result["warning_events"][0]["risk_period_start"], 1585.0)
+                self.assertEqual(result["warning_events"][0]["risk_period_end"], 2785.0)
+                self.assertEqual(result["confirm_windows"], 1)
                 page = app.test_client().get(result_url)
                 self.assertEqual(page.status_code, 200)
-                self.assertIn(b"Prediction horizon", page.data)
+                self.assertIn(b"Risk window after warning", page.data)
+                self.assertIn("5–25 minutes".encode(), page.data)
+                self.assertIn(b"does not tell us whether a seizure did", page.data)
+                self.assertIn(b"One warning is issued after 1 consecutive windows", page.data)
                 csv_url = result_url.replace("/anticipatory-result/", "/download/") + ".csv"
                 csv_response = app.test_client().get(csv_url)
                 self.assertEqual(csv_response.status_code, 200)
@@ -275,7 +308,7 @@ class AnticipatoryProtocolTests(unittest.TestCase):
                     missing_model = client.post("/api/anticipate", data={
                         "edf_file": (io.BytesIO(b"not an EDF"), "recording.edf")})
                 self.assertEqual(missing_model.status_code, 503)
-                self.assertIn(b"not trained", missing_model.data)
+                self.assertIn(b"candidate is unavailable", missing_model.data)
 
 
 if __name__ == "__main__":

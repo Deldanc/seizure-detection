@@ -1,0 +1,447 @@
+{
+  "protocol": {
+    "horizon_seconds": 1200.0,
+    "sph_seconds": 300.0,
+    "window_seconds": 5.0,
+    "split": {
+      "train": [
+        "chb03_15.edf",
+        "chb03_16.edf",
+        "chb03_17.edf",
+        "chb03_34.edf"
+      ],
+      "validation": [
+        "chb03_35.edf"
+      ],
+      "test": [
+        "chb03_36.edf"
+      ],
+      "training_recordings": 4,
+      "validation_recordings": 1,
+      "test_recordings": 1,
+      "training_rows": 2496,
+      "validation_rows": 458,
+      "test_rows": 289,
+      "full_recording_windows": {
+        "train": 2880,
+        "validation": 720,
+        "test": 720
+      },
+      "positive_windows": {
+        "train": 240,
+        "validation": 240,
+        "test": 240
+      }
+    },
+    "ga_features": [
+      "ch1_rms",
+      "ch10_gamma_relative_power",
+      "ch13_gamma_relative_power",
+      "ch17_mean"
+    ],
+    "threshold_selected_on_validation": 0.8900000000000002,
+    "class_counts_test": {
+      "negative": 49,
+      "positive": 240
+    }
+  },
+  "feature_schema_version": 3,
+  "candidate_feature_count": 345,
+  "feature_catalog": "data/processed/anticipatory_feature_catalog.csv",
+  "feature_comparisons_validation": {
+    "ga_selected": {
+      "features": [
+        "ch1_rms",
+        "ch10_gamma_relative_power",
+        "ch13_gamma_relative_power",
+        "ch17_mean"
+      ],
+      "feature_count": 4,
+      "threshold_selected_on_validation": 0.8900000000000002,
+      "validation_metrics": {
+        "n_windows": 458,
+        "positive_windows": 240,
+        "threshold": 0.8900000000000002,
+        "accuracy": 0.18340611353711792,
+        "precision": 0.18095238095238095,
+        "sensitivity": 0.15833333333333333,
+        "specificity": 0.21100917431192662,
+        "f1": 0.1688888888888889,
+        "pr_auc_average_precision": 0.35841972271428535,
+        "roc_auc": 0.1672400611620795,
+        "confusion_matrix_tn_fp_fn_tp": [
+          46,
+          172,
+          202,
+          38
+        ],
+        "event_level": {
+          "seizure_events": 1,
+          "successfully_predicted_events": 1,
+          "event_sensitivity": 1.0,
+          "alarms_generated": [
+            15.0,
+            2285.0
+          ],
+          "false_alarm_times": [
+            15.0
+          ],
+          "matched_alarm_times": [
+            2285.0
+          ],
+          "false_alarm_count": 1,
+          "eligible_monitoring_hours": 0.6361111111111111,
+          "total_monitoring_hours": 1.0,
+          "false_alarms_per_hour": 1.0,
+          "false_alarms_per_eligible_hour": 1.572052401746725,
+          "warning_lead_times_seconds": [
+            307.0
+          ],
+          "active_warning_fraction_percent": 52.40174672489083,
+          "alarm_policy": {
+            "consecutive_windows": 3,
+            "refractory_seconds": 1800,
+            "event_match": "onset lies in [alarm+SPH, alarm+SPH+horizon]"
+          }
+        }
+      }
+    },
+    "existing_detector_four": {
+      "features": [
+        "ch1_energy",
+        "ch6_rms",
+        "ch14_gamma_power",
+        "ch18_std"
+      ],
+      "feature_count": 4,
+      "threshold_selected_on_validation": 0.9800000000000002,
+      "validation_metrics": {
+        "n_windows": 458,
+        "positive_windows": 240,
+        "threshold": 0.9800000000000002,
+        "accuracy": 0.5633187772925764,
+        "precision": 0.9545454545454546,
+        "sensitivity": 0.175,
+        "specificity": 0.9908256880733946,
+        "f1": 0.29577464788732394,
+        "pr_auc_average_precision": 0.8613998087903251,
+        "roc_auc": 0.8178516819571865,
+        "confusion_matrix_tn_fp_fn_tp": [
+          216,
+          2,
+          198,
+          42
+        ],
+        "event_level": {
+          "seizure_events": 1,
+          "successfully_predicted_events": 1,
+          "event_sensitivity": 1.0,
+          "alarms_generated": [
+            1185.0
+          ],
+          "false_alarm_times": [],
+          "matched_alarm_times": [
+            1185.0
+          ],
+          "false_alarm_count": 0,
+          "eligible_monitoring_hours": 0.6361111111111111,
+          "total_monitoring_hours": 1.0,
+          "false_alarms_per_hour": 0.0,
+          "false_alarms_per_eligible_hour": 0.0,
+          "warning_lead_times_seconds": [
+            1407.0
+          ],
+          "active_warning_fraction_percent": 35.37117903930131,
+          "alarm_policy": {
+            "consecutive_windows": 3,
+            "refractory_seconds": 1800,
+            "event_match": "onset lies in [alarm+SPH, alarm+SPH+horizon]"
+          }
+        }
+      }
+    },
+    "theta_alpha_absolute_ch14": {
+      "features": [
+        "ch14_theta_power",
+        "ch14_alpha_power"
+      ],
+      "feature_count": 2,
+      "threshold_selected_on_validation": 0.9300000000000002,
+      "validation_metrics": {
+        "n_windows": 458,
+        "positive_windows": 240,
+        "threshold": 0.9300000000000002,
+        "accuracy": 0.5633187772925764,
+        "precision": 0.8846153846153846,
+        "sensitivity": 0.19166666666666668,
+        "specificity": 0.9724770642201835,
+        "f1": 0.3150684931506849,
+        "pr_auc_average_precision": 0.8289258615543673,
+        "roc_auc": 0.8415519877675841,
+        "confusion_matrix_tn_fp_fn_tp": [
+          212,
+          6,
+          194,
+          46
+        ],
+        "event_level": {
+          "seizure_events": 1,
+          "successfully_predicted_events": 1,
+          "event_sensitivity": 1.0,
+          "alarms_generated": [
+            1780.0
+          ],
+          "false_alarm_times": [],
+          "matched_alarm_times": [
+            1780.0
+          ],
+          "false_alarm_count": 0,
+          "eligible_monitoring_hours": 0.6361111111111111,
+          "total_monitoring_hours": 1.0,
+          "false_alarms_per_hour": 0.0,
+          "false_alarms_per_eligible_hour": 0.0,
+          "warning_lead_times_seconds": [
+            812.0
+          ],
+          "active_warning_fraction_percent": 9.388646288209607,
+          "alarm_policy": {
+            "consecutive_windows": 3,
+            "refractory_seconds": 1800,
+            "event_match": "onset lies in [alarm+SPH, alarm+SPH+horizon]"
+          }
+        }
+      }
+    },
+    "theta_alpha_relative_ch14": {
+      "features": [
+        "ch14_theta_relative_power",
+        "ch14_alpha_relative_power"
+      ],
+      "feature_count": 2,
+      "threshold_selected_on_validation": 0.8000000000000002,
+      "validation_metrics": {
+        "n_windows": 458,
+        "positive_windows": 240,
+        "threshold": 0.8000000000000002,
+        "accuracy": 0.45633187772925765,
+        "precision": 0.2857142857142857,
+        "sensitivity": 0.025,
+        "specificity": 0.9311926605504587,
+        "f1": 0.04597701149425287,
+        "pr_auc_average_precision": 0.4101402505931514,
+        "roc_auc": 0.3041666666666667,
+        "confusion_matrix_tn_fp_fn_tp": [
+          203,
+          15,
+          234,
+          6
+        ],
+        "event_level": {
+          "seizure_events": 1,
+          "successfully_predicted_events": 1,
+          "event_sensitivity": 1.0,
+          "alarms_generated": [
+            2290.0
+          ],
+          "false_alarm_times": [],
+          "matched_alarm_times": [
+            2290.0
+          ],
+          "false_alarm_count": 0,
+          "eligible_monitoring_hours": 0.6361111111111111,
+          "total_monitoring_hours": 1.0,
+          "false_alarms_per_hour": 0.0,
+          "false_alarms_per_eligible_hour": 0.0,
+          "warning_lead_times_seconds": [
+            302.0
+          ],
+          "active_warning_fraction_percent": 0.0,
+          "alarm_policy": {
+            "consecutive_windows": 3,
+            "refractory_seconds": 1800,
+            "event_match": "onset lies in [alarm+SPH, alarm+SPH+horizon]"
+          }
+        }
+      }
+    }
+  },
+  "ga_anfis_test": {
+    "n_windows": 289,
+    "positive_windows": 240,
+    "threshold": 0.8900000000000002,
+    "accuracy": 0.5778546712802768,
+    "precision": 0.8206521739130435,
+    "sensitivity": 0.6291666666666667,
+    "specificity": 0.32653061224489793,
+    "f1": 0.7122641509433962,
+    "pr_auc_average_precision": 0.7555426290923771,
+    "roc_auc": 0.3734693877551021,
+    "confusion_matrix_tn_fp_fn_tp": [
+      16,
+      33,
+      89,
+      151
+    ],
+    "event_level": {
+      "seizure_events": 1,
+      "successfully_predicted_events": 0,
+      "event_sensitivity": 0.0,
+      "alarms_generated": [
+        35.0,
+        1980.0
+      ],
+      "false_alarm_times": [
+        35.0,
+        1980.0
+      ],
+      "matched_alarm_times": [],
+      "false_alarm_count": 2,
+      "eligible_monitoring_hours": 0.4013888888888889,
+      "total_monitoring_hours": 1.0,
+      "false_alarms_per_hour": 2.0,
+      "false_alarms_per_eligible_hour": 4.982698961937716,
+      "warning_lead_times_seconds": [],
+      "active_warning_fraction_percent": 75.77854671280276,
+      "alarm_policy": {
+        "consecutive_windows": 3,
+        "refractory_seconds": 1800,
+        "event_match": "onset lies in [alarm+SPH, alarm+SPH+horizon]"
+      }
+    }
+  },
+  "baselines_test": {
+    "always_interictal": {
+      "n_windows": 289,
+      "positive_windows": 240,
+      "threshold": 0.5,
+      "accuracy": 0.1695501730103806,
+      "precision": 0.0,
+      "sensitivity": 0.0,
+      "specificity": 1.0,
+      "f1": 0.0,
+      "pr_auc_average_precision": 0.8304498269896193,
+      "roc_auc": 0.5,
+      "confusion_matrix_tn_fp_fn_tp": [
+        49,
+        0,
+        240,
+        0
+      ]
+    },
+    "logistic_regression": {
+      "n_windows": 289,
+      "positive_windows": 240,
+      "threshold": 0.7000000000000002,
+      "accuracy": 0.6608996539792388,
+      "precision": 0.8287037037037037,
+      "sensitivity": 0.7458333333333333,
+      "specificity": 0.24489795918367346,
+      "f1": 0.7850877192982456,
+      "pr_auc_average_precision": 0.8008638519316299,
+      "roc_auc": 0.4540816326530613,
+      "confusion_matrix_tn_fp_fn_tp": [
+        12,
+        37,
+        61,
+        179
+      ]
+    },
+    "random_forest": {
+      "n_windows": 289,
+      "positive_windows": 240,
+      "threshold": 0.8400000000000002,
+      "accuracy": 0.46366782006920415,
+      "precision": 0.8148148148148148,
+      "sensitivity": 0.4583333333333333,
+      "specificity": 0.4897959183673469,
+      "f1": 0.5866666666666667,
+      "pr_auc_average_precision": 0.8279379354259528,
+      "roc_auc": 0.45820578231292514,
+      "confusion_matrix_tn_fp_fn_tp": [
+        24,
+        25,
+        130,
+        110
+      ]
+    }
+  },
+  "ga_search": {
+    "configuration": {
+      "population_size": 12,
+      "generations": 6,
+      "max_features": 4,
+      "mutation_rate": 0.04,
+      "random_state": 42,
+      "selection": "uniform sampling from the top third",
+      "crossover": "uniform",
+      "stopping": "configured generations or 3 stagnant generations",
+      "fitness": "mean grouped-CV window F1 minus 0.002 per feature",
+      "grouping": "groups supplied by caller; may be recordings or temporal blocks"
+    },
+    "selected_features": [
+      "ch1_rms",
+      "ch10_gamma_relative_power",
+      "ch13_gamma_relative_power",
+      "ch17_mean"
+    ],
+    "fitness": 0.6885526099704024,
+    "history": [
+      {
+        "generation": 1,
+        "fitness": 0.402524970983521,
+        "selected_count": 3
+      },
+      {
+        "generation": 2,
+        "fitness": 0.583366990589002,
+        "selected_count": 4
+      },
+      {
+        "generation": 3,
+        "fitness": 0.6885526099704024,
+        "selected_count": 4
+      },
+      {
+        "generation": 4,
+        "fitness": 0.6885526099704024,
+        "selected_count": 4
+      },
+      {
+        "generation": 5,
+        "fitness": 0.6885526099704024,
+        "selected_count": 4
+      },
+      {
+        "generation": 6,
+        "fitness": 0.6885526099704024,
+        "selected_count": 4
+      }
+    ],
+    "seed": 42
+  },
+  "model_training": {
+    "objective": "class-balanced binary cross entropy + L2",
+    "optimizer": "L-BFGS (joint premise and consequent gradient updates)",
+    "iterations": 102,
+    "converged": true,
+    "status_message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL",
+    "gradient_norm": 1.848744247071262e-05,
+    "loss": 0.2741912896676026,
+    "membership_functions_per_feature": 2,
+    "rule_count": 16,
+    "consequent": "first-order linear Sugeno"
+  },
+  "outputs": {
+    "predictions_csv": "results/csv/anticipatory_featureaudit_v4_predictions.csv",
+    "artifact": "models/anticipatory_ga_anfis_featureaudit_v4.joblib",
+    "feature_catalog": "data/processed/anticipatory_feature_catalog.csv"
+  },
+  "limitations": [
+    "Only one subject is locally available; three annotated chb03 EDFs are missing.",
+    "Training contains one seizure event; training-only GA folds are five-minute temporal recording blocks, not independent-event folds.",
+    "Validation and test each contain one annotated seizure event. Candidate validation metrics and selected thresholds are unstable.",
+    "The test recording is not used for GA selection, feature comparisons, scaler/model fitting, or threshold selection.",
+    "Scores are uncalibrated. Rates below 177.78 Hz and channel sets other than the saved montage are rejected; supported rates are causally resampled.",
+    "The four-feature cap is an ANFIS implementation constraint (2^d fuzzy rules), not an empirically established optimum."
+  ]
+}

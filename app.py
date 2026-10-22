@@ -3,7 +3,7 @@ import csv
 import io
 import json
 import uuid
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify, send_file, redirect
 from inference.predictor import predict_edf, validate_edf, get_default_threshold, get_model_info
 from inference.anticipatory_predictor import predict_anticipatory_edf
 
@@ -11,6 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_DIR = BASE_DIR / "uploads"
 UPLOAD_DIR.mkdir(exist_ok=True)
 SAMPLE_EDF = BASE_DIR / "sample" / "chb03_36_sample.edf"
+ANTICIPATORY_SAMPLE_EDF = BASE_DIR / "data" / "raw" / "chb03_36.edf"
 CACHE_DIR = BASE_DIR / ".result_cache"
 CACHE_DIR.mkdir(exist_ok=True)
 
@@ -35,14 +36,15 @@ def _load_result(job_id):
 def dashboard():
     report_path = BASE_DIR / "results" / "csv" / "ga_anfis_evaluation.json"
     report = json.loads(report_path.read_text()) if report_path.exists() else None
-    anticipatory_path = BASE_DIR / "results" / "csv" / "anticipatory_featureaudit_v4_evaluation.json"
-    anticipatory = json.loads(anticipatory_path.read_text()) if anticipatory_path.exists() else None
+    risk_candidate_path = BASE_DIR / "results" / "diagnostics" / "anticipatory_theta_alpha_candidate" / "evaluation.json"
+    risk_candidate = json.loads(risk_candidate_path.read_text()) if risk_candidate_path.exists() else None
     try:
         model_info = get_model_info()
     except (FileNotFoundError, ValueError):
         model_info = None
     return render_template("dashboard.html", evaluation=report,
-        anticipatory_evaluation=anticipatory, model_info=model_info)
+        risk_candidate=risk_candidate,
+        model_info=model_info)
 
 
 @app.route("/predict", methods=["GET"])
@@ -73,14 +75,27 @@ def anticipate_page():
     return render_template("anticipate.html", model_info=model_info, model_error=model_error)
 
 
+@app.route("/anticipate/sample", methods=["GET"])
+def analyze_anticipatory_sample():
+    if not ANTICIPATORY_SAMPLE_EDF.exists():
+        return render_template("anticipate.html", error="The bundled CHB03 sample EDF is unavailable."), 404
+    try:
+        result = predict_anticipatory_edf(ANTICIPATORY_SAMPLE_EDF)
+        result["source"] = "sample"
+        _save_result(result)
+        return redirect(f"/anticipatory-result/{result['job_id']}")
+    except (ValueError, FileNotFoundError) as exc:
+        return render_template("anticipate.html", error=str(exc)), 400
+
+
 @app.route("/api/anticipate", methods=["POST"])
 def api_anticipate():
     uploaded = request.files.get("edf_file")
     use_sample = request.form.get("use_sample") == "1"
     if use_sample:
-        if not SAMPLE_EDF.exists():
-            return jsonify(ok=False, error="Sample EDF is not bundled. Add sample/chb03_36_sample.edf."), 400
-        path = SAMPLE_EDF
+        if not ANTICIPATORY_SAMPLE_EDF.exists():
+            return jsonify(ok=False, error="The bundled held-out CHB03 EDF is unavailable."), 400
+        path = ANTICIPATORY_SAMPLE_EDF
     else:
         if not uploaded or not uploaded.filename:
             return jsonify(ok=False, error="Please select an EDF file or use the bundled sample."), 400

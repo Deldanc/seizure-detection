@@ -47,11 +47,11 @@ interval before an annotated seizure at `T` is
 postictal exclusion are not positive. See `reports/prediction_protocol.md` for
 the full rules, causal filtering, features, and event matching.
 
-The GA uses binary feature chromosomes, grouped temporal-block validation F1
+The original GA uses binary feature chromosomes, grouped temporal-block validation F1
 with a feature-count penalty, and a reproducible seed. ANFIS is first-order
 Sugeno with Gaussian membership functions, normalized product rule firing, and
 trained linear consequents. Scores are uncalibrated. A warning is issued after
-three consecutive threshold crossings; its risk interval starts after SPH and
+the selected number of consecutive threshold crossings; its risk interval starts after SPH and
 lasts through the prediction horizon. Alarms are suppressed for 30 minutes.
 No exact seizure onset time or countdown is reported.
 
@@ -80,34 +80,57 @@ sensitivity, then fewer full-timeline false alarms, then window specificity,
 precision, and F1. In the app the validation-selected
 threshold is the default; a slider override is marked unvalidated.
 
-Training creates the versioned model
+The original GA experiment created the preserved baseline model
 `models/anticipatory_ga_anfis_featureaudit_v4.joblib`,
 `results/csv/anticipatory_featureaudit_v4_predictions.csv`,
 `results/csv/anticipatory_featureaudit_v4_evaluation.json`,
 `reports/feature_selection_report.md`, and `reports/evaluation_report.md`.
-Earlier artifacts are preserved under
-`archive/anticipatory_pre_feature_audit_20261022/`. The Flask app exposes
+The active future-risk route now loads the separate validation-selected
+theta/alpha ANFIS candidate at
+`models/anticipatory_theta_alpha_event_v1.joblib`. It uses `ch14_theta_power`
+and `ch14_alpha_power`, threshold 0.99, and one-window confirmation. Its
+candidate evaluation is reproducible with
+`python -m src.models.evaluate_theta_alpha_candidate`. The original v4 model
+remains preserved for comparison. The Flask app exposes
 the original detector at `/predict` and anticipatory research at `/anticipate`.
 The latter accepts the trained CHB03 23-channel set in any order and reorders
 channels by name. It causally resamples input rates of at least 177.78 Hz to 256 Hz and
 rejects missing/extra channels or rates unable to represent the 30–80 Hz gamma
-band. Training and inference use the same causal preprocessing.
+band. The Future risk sample button analyzes the actual `chb03_36.edf` held-out
+test recording; its output is a demo of inference on that test file, not a new
+independent evaluation. The generic-label EDF in `sample/` is used only by the
+separate current-activity detector and is not accepted by Future risk.
+Training and inference use the same causal preprocessing.
 
 ## Evaluation and limitations
 
-The anticipatory split is chb03_34 and any locally present 02/03/04 files plus
+The original GA anticipatory split is chb03_34 and any locally present 02/03/04 files plus
 seizure-free 15/16/17 for training, chb03_35 for validation/threshold choice,
 and chb03_36 for the single test event. Only one training, validation, and test
 seizure event are available.
 GA fitness uses separated five-minute blocks within its training data; these
-are not independent event folds. After the audit, the GA subset produced 0/1
-event matches and 2 false alarms in the one-hour held-out recording. Its window
+are not independent event folds. The original GA subset produced 0/1
+event matches and one pre-onset false alarm plus one post-onset late alert in
+the one-hour held-out recording. Its window
 sensitivity was 62.9%, specificity 32.7%, F1 0.712, and ROC-AUC 0.373 at the
 validation threshold. The high preictal-window prevalence makes these window
 metrics an unreliable proxy for useful warning performance; average precision (0.756) is below the test-set positive prevalence baseline (0.830). Continuous-timeline evaluation includes alarms from unlabeled intervals; the previous 19m40s hit is retained only as a historical experiment. On validation, the absolute
 theta/alpha pair had higher F1 and ROC-AUC than the GA subset; the existing
 quartet had higher precision and zero false alarms but lower sensitivity and
-F1. These one-event tradeoffs are unstable. No improvement is established.
+F1. These one-event tradeoffs are unstable.
+
+The event-focused candidate selected on CHB03_35 validation warned 440 seconds
+before the CHB03_36 onset at its 0.99 threshold and one-window confirmation.
+It detected 1 of 240 preictal windows (window sensitivity 0.4%) and matched
+the single historical test event, with no false alarm in that one-hour file.
+On two seizure-free CHB01 negative-control recordings it raised three warnings
+in two recording hours (1.5 per hour). This event was examined in earlier
+iterations, so the result is exploratory, not a fresh test or proof of reliable
+prediction. The warning is issued when a completed 5-second window's score is
+at least 0.99; it then marks a future risk interval from 5 to 25 minutes after
+that warning. More detail is in
+`results/diagnostics/anticipatory_theta_alpha_candidate/evaluation.json` and
+`reports/model_diagnostics.md`.
 Scores are not calibrated probabilities. The prototype has no
 patient-independent evidence and must not guide clinical decisions.
 

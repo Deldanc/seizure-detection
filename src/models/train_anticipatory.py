@@ -112,12 +112,20 @@ def event_evaluation(frame, score, threshold):
     alarms = generate_alarms(times, held["__score"].to_numpy(float), threshold,
         REFRACTORY_SEC, CONFIRM_WINDOWS, STEP_SEC)
     seizures = annotations.get(filename, [])
-    matched_onsets, lead_times, false_alarms = set(), [], []
+    matched_onsets, lead_times, false_alarms, late_alarms = set(), [], [], []
     for alarm in alarms:
         match = next((onset for onset, _ in seizures if onset not in matched_onsets
             and alarm + SPH_SEC <= onset <= alarm + SPH_SEC + PREDICTION_HORIZON_SEC), None)
         if match is None:
-            false_alarms.append(alarm)
+            # A warning issued after onset cannot anticipate that event. Keep
+            # it separate from a prospective false alarm so event metrics do
+            # not mislabel a late detector response as a preictal alarm.
+            late_event = next(((onset, offset) for onset, offset in reversed(seizures)
+                               if onset < alarm), None)
+            if late_event is not None:
+                late_alarms.append(alarm)
+            else:
+                false_alarms.append(alarm)
         else:
             matched_onsets.add(match)
             lead_times.append(match - alarm)
@@ -130,14 +138,17 @@ def event_evaluation(frame, score, threshold):
     return {"seizure_events": len(seizures), "successfully_predicted_events": len(matched_onsets),
         "event_sensitivity": len(matched_onsets) / len(seizures) if seizures else None,
         "alarms_generated": alarms, "false_alarm_times": false_alarms,
-        "matched_alarm_times": [t for t in alarms if t not in false_alarms],
+        "late_or_ictal_alarm_times": late_alarms,
+        "matched_alarm_times": [t for t in alarms if t not in false_alarms and t not in late_alarms],
         "false_alarm_count": len(false_alarms), "eligible_monitoring_hours": eligible_hours,
         "total_monitoring_hours": monitoring_hours,
         "false_alarms_per_hour": len(false_alarms) / monitoring_hours if monitoring_hours else None,
         "false_alarms_per_eligible_hour": len(false_alarms) / eligible_hours if eligible_hours else None,
+        "late_or_ictal_alarm_count": len(late_alarms),
         "warning_lead_times_seconds": lead_times,
         "active_warning_fraction_percent": min(100.0, warned_seconds / max(eligible_hours * 3600, 1) * 100),
         "alarm_policy": {"consecutive_windows": CONFIRM_WINDOWS, "refractory_seconds": REFRACTORY_SEC,
+            "post_onset_alerts_count_as_false_alarms": False,
             "event_match": "onset lies in [alarm+SPH, alarm+SPH+horizon]"}}
 
 
@@ -363,9 +374,9 @@ def render_report(report):
         f"Train {p['split']['train']}; validation {p['split']['validation']}; untouched test {p['split']['test']}.",
         f"Test class counts: {p['class_counts_test']}.", "", "## Held-out test results", "",
         f"Window metrics: precision {test['precision']:.3f}, sensitivity {test['sensitivity']:.3f}, specificity {test['specificity']:.3f}, F1 {test['f1']:.3f}, AP {test['pr_auc_average_precision']:.3f}, ROC-AUC {test['roc_auc']:.3f}; TN/FP/FN/TP {test['confusion_matrix_tn_fp_fn_tp']}.",
-        f"Event result: {e['successfully_predicted_events']}/{e['seizure_events']} events; {e['false_alarm_count']} false alarms over {e['total_monitoring_hours']:.3f} recording hours ({e['false_alarms_per_hour']:.3f}/recording hour; {e['false_alarms_per_eligible_hour']:.3f}/eligible hour); lead times in seconds {e['warning_lead_times_seconds']}.",
+        f"Event result: {e['successfully_predicted_events']}/{e['seizure_events']} events anticipated; {e['false_alarm_count']} pre-onset unmatched false alarms over {e['total_monitoring_hours']:.3f} recording hours ({e['false_alarms_per_hour']:.3f}/recording hour; {e['false_alarms_per_eligible_hour']:.3f}/eligible hour), plus {e['late_or_ictal_alarm_count']} late/post-onset alerts; lead times in seconds {e['warning_lead_times_seconds']}.",
         f"Eligible monitoring time under warning: {e['active_warning_fraction_percent']:.1f}%.", "",
-        "Alarms are generated on the full continuous recording timeline. Window metrics use only labeled eligible windows; false-alarm counts include alarms outside eligible windows. The test set is one annotated event in one patient; these are descriptive one-event estimates and do not support a performance claim.", "",
+        "Alarms are generated on the full continuous recording timeline. Window metrics use only labeled eligible windows; late/post-onset alerts are reported separately from prospective false alarms. The first test alarm at 35 s forecast 335–1535 s, ending 190 s before onset at 1725 s. Its 30-minute refractory interval suppressed alarms until 1835 s; the next alarm at 1980 s was late. This test timeline explains the miss and was not used to retune the validation-selected refractory setting. The test is one event in one patient and does not support a performance claim.", "",
         "## Validation feature-subset comparison", "", "See `reports/feature_selection_report.md` for the same-protocol validation metrics for the GA subset, existing detector quartet, and theta/alpha absolute/relative subsets. Validation metrics are exploratory and were not used to select among the GA candidates.", "",
         "## Baselines", "", "Model | Precision | Sensitivity | Specificity | F1 | AP | ROC-AUC | TN/FP/FN/TP", "---|---:|---:|---:|---:|---:|---:|---|"]
     for name, m in report["baselines_test"].items():

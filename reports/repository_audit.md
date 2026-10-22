@@ -5,7 +5,8 @@ Audit date: 2026-10-22. Scope: the active seizure detector, the separate anticip
 ## Two distinct models
 
 - `/predict` uses `models/ga_anfis_artifact.joblib` for seizure-activity detection in current EEG windows. Its saved quartet is `ch1_energy`, `ch6_rms`, `ch14_gamma_power`, and `ch18_std`. The artifact contains GA population/generation/seed/history metadata. Inspection of the saved GA configuration confirms these features were produced by a GA with population 12, six generations, seed 42, and a maximum of four inputs. That search targeted ictal-window detection, so the quartet is not evidence of optimal anticipatory features. Its historical gamma definition is 30–100 Hz.
-- `/anticipate` loads the new versioned artifact `models/anticipatory_ga_anfis_featureaudit_v4.joblib`. It is a separate model, with annotation-based preictal labels and an explicit SPH/horizon protocol. The older anticipatory artifact and associated outputs were copied into `archive/anticipatory_pre_feature_audit_20261022/` before replacement or reruns.
+- The often-described 107-feature Random Forest is a separate legacy artifact: `models/neuroguard_rf.joblib` deserializes as `RandomForestClassifier` with 107 inputs, matching the 107 entries in `models/selected_features.txt`. It is not the model used by `/predict`; the active route loads the four-input Sugeno ANFIS artifact above. The two artifacts implement different historical experiments and must not be conflated.
+- `/anticipate` now loads `models/anticipatory_theta_alpha_event_v1.joblib`, a validation-selected two-feature ANFIS with one-window confirmation. The prior GA model `models/anticipatory_ga_anfis_featureaudit_v4.joblib` remains preserved and its poor results are documented. The candidate issued an alarm within the configured warning window for the previously examined CHB03_36 event, but only one of 240 positive windows crossed threshold; it also issued three warnings on two seizure-free CHB01 recordings. This is exploratory evidence, not a reliable performance claim.
 
 ## Feature extraction audit
 
@@ -33,7 +34,7 @@ Audit date: 2026-10-22. Scope: the active seizure detector, the separate anticip
 - Rebuilt the schema v3 feature set and catalog from all seven local EDFs.
 - Trained and saved the versioned ANFIS artifact with its exact ordered selected list, scaler, feature schema, band/filter/resampling settings, channels, threshold, and alarm protocol. V4 fixes an objective/gradient mismatch in L2 regularization; the saved ANFIS converged.
 - Compared real EDF inference scores against held-out CSV scores (maximum absolute difference 5.77e-13), checked artifact dimensions and serialization, tested causal filter/resampler prefix invariance, channel reordering, label boundaries, full-timeline event alarms, and Flask output.
-- Exact test command and result are recorded in `reports/requirement_verification.md`; 25 tests pass.
+- Exact test command and result are recorded in `reports/requirement_verification.md`; 26 tests pass.
 
 ## Limits
 

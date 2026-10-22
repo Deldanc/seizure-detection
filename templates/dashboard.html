@@ -20,7 +20,7 @@
   <section class="hero">
     <div class="eyebrow">EEG SEIZURE DETECTION · RESEARCH SYSTEM</div>
     <h1>Research Dashboard</h1>
-    <p>The existing EDF workflow detects seizure activity. A separate experimental GA–ANFIS route now scores preictal future risk under an explicit horizon and SPH; its one-event test is not clinical evidence.</p>
+    <p>The existing EDF workflow detects seizure activity. A separate experimental ANFIS route scores future seizure risk under an explicit horizon and SPH; its one-event test is not clinical evidence.</p>
     <div class="hero-actions">
       <a class="primary-btn" href="/predict">Analyze a new EDF <span>→</span></a>
       <a class="secondary-btn" href="/anticipate">Try future-risk research</a>
@@ -89,26 +89,31 @@
   </section>
   {% endif %}
 
-  {% if anticipatory_evaluation %}
-  {% set pred = anticipatory_evaluation.ga_anfis_test %}
+  {% if risk_candidate %}
+  {% set pred = risk_candidate.chb03_36_exploratory_metrics %}
   {% set event = pred.event_level %}
+  {% set alarm_time = event.alarms_generated[0] if event.alarms_generated else none %}
+  {% set onset_lead = event.warning_lead_times_seconds[0] if event.warning_lead_times_seconds else none %}
+  {% set risk_start = alarm_time + risk_candidate.sph_seconds if alarm_time is not none else none %}
+  {% set risk_end = alarm_time + risk_candidate.sph_seconds + risk_candidate.prediction_horizon_seconds if alarm_time is not none else none %}
   <section class="section">
-    <div class="section-kicker">EXPERIMENTAL FUTURE-RISK PREDICTION · SEPARATE MODEL</div>
+    <div class="section-kicker">EXPERIMENTAL FUTURE-RISK PREDICTION · ANFIS CANDIDATE</div>
     <div class="section-title-row">
-      <div><h2>Does it predict ahead?</h2><p>Yes, this separate GA–ANFIS route issues a warning for a defined future interval. It does not detect current seizure activity. The results below are from held-out recording chb03_36.edf.</p></div>
-      <span class="tag">{{ anticipatory_evaluation.protocol.split.test_rows }} TEST WINDOWS · {{ anticipatory_evaluation.protocol.split.positive_windows.test }} PREICTAL</span>
+      <div><h2>Event-focused theta/alpha candidate</h2><p>Validation-selected ANFIS using ch14 theta and alpha power. It issues a warning after one window crosses threshold; it does not detect current seizure activity. Results below are exploratory results from chb03_36.edf, which was examined in earlier project runs.</p></div>
+      <span class="tag">CHB03_36 · 1 HISTORICAL EVENT</span>
     </div>
     <div class="metric-grid priority-metrics">
-      <div class="metric-card"><span>Threshold</span><strong>{{ "%.2f"|format(pred.threshold) }}</strong><small>selected using validation recording</small></div>
+      <div class="metric-card"><span>Threshold</span><strong>{{ "%.2f"|format(risk_candidate.threshold) }}</strong><small>selected on validation</small></div>
       <div class="metric-card"><span>Window sensitivity</span><strong>{{ "%.1f"|format(pred.sensitivity * 100) }}%</strong><small>{{ pred.confusion_matrix_tn_fp_fn_tp[3] }} of {{ pred.positive_windows }} preictal windows detected</small></div>
       <div class="metric-card"><span>Window F1</span><strong>{{ "%.3f"|format(pred.f1) }}</strong><small>precision {{ "%.1f"|format(pred.precision * 100) }}%</small></div>
       <div class="metric-card"><span>ROC-AUC</span><strong>{{ "%.3f"|format(pred.roc_auc) }}</strong><small>0.5 is chance-level ranking</small></div>
-      <div class="metric-card"><span>Random forest baseline F1</span><strong>{{ "%.3f"|format(anticipatory_evaluation.baselines_test.random_forest.f1) }}</strong><small>same held-out windows; above ANFIS F1</small></div>
+      <div class="metric-card"><span>Window specificity</span><strong>{{ "%.1f"|format(pred.specificity * 100) }}%</strong><small>interictal windows below threshold</small></div>
       <div class="metric-card"><span>Events matched</span><strong>{{ event.successfully_predicted_events }}/{{ event.seizure_events }}</strong><small>one held-out seizure event</small></div>
       <div class="metric-card"><span>False alarms</span><strong>{{ event.false_alarm_count }}</strong><small>over {{ "%.3f"|format(event.eligible_monitoring_hours) }} eligible hours</small></div>
     </div>
-    <p class="chart-note">Protocol: 5-second windows, {{ (anticipatory_evaluation.protocol.horizon_seconds / 60)|int }}-minute future horizon after a {{ (anticipatory_evaluation.protocol.sph_seconds / 60)|int }}-minute SPH. {% if event.warning_lead_times_seconds %}The single event was matched {{ "%.1f"|format(event.warning_lead_times_seconds[0] / 60) }} minutes after its alarm.{% else %}No alarm matched the held-out event.{% endif %} Window sensitivity is low and ROC-AUC is near chance. This one-event result does not establish reliable prediction or an advantage over baselines. Scores are uncalibrated and the model is not clinically validated.</p>
-    <p class="chart-note">Anticipatory schema v3: 345 candidates, including absolute and relative power; its gamma band is 30–80 Hz. GA-selected inputs: <code>{{ anticipatory_evaluation.protocol.ga_features|join(", ") }}</code></p>
+    <p class="chart-note">{% if alarm_time is not none and onset_lead is not none %}The warning fired at {{ alarm_time|int }} s. It covered the {{ risk_candidate.sph_seconds // 60 }}- to {{ (risk_candidate.sph_seconds + risk_candidate.prediction_horizon_seconds) // 60 }}-minute-ahead interval, {{ risk_start|int }}–{{ risk_end|int }} s; onset followed {{ onset_lead|int }} s later.{% else %}No warning matched the annotated test seizure.{% endif %} Validation selected a {{ risk_candidate.confirm_windows }}-window crossing and {{ "%.2f"|format(risk_candidate.threshold) }} threshold. Only {{ pred.confusion_matrix_tn_fp_fn_tp[3] }} of {{ pred.positive_windows }} test preictal windows crossed threshold, so the event hit does not show dependable window-level prediction. The test event was examined in previous iterations; this is not fresh independent evidence. Scores are uncalibrated and the system is not clinically validated.</p>
+    <p class="chart-note"><strong>Seizure-free check:</strong> the same fixed model and threshold raised {{ risk_candidate.chb01_combined_false_alarms }} warnings across two one-hour CHB01 recordings annotated with no seizures ({{ "%.1f"|format(risk_candidate.chb01_combined_false_alarms / 2) }} warnings per recording hour). Per file: {% for control in risk_candidate.chb01_seizure_free_negative_controls %}<code>{{ control.file }}</code>, {{ control.false_alarm_count }} warning{{ "s" if control.false_alarm_count != 1 else "" }}{% if not loop.last %}; {% endif %}{% endfor %}. These are false alarms for these recordings and show that the single CHB03 event hit is not reliable prediction evidence.</p>
+    <p class="chart-note">Inputs: <code>{{ risk_candidate.features|join(", ") }}</code> (theta 4–8 Hz and alpha 8–13 Hz). The full feature pipeline also includes delta, beta and gamma (30–80 Hz) candidates. This is a validation-selected ANFIS feature-pair experiment, not a GA-selected model.</p>
     <a class="secondary-btn" href="/anticipate">Open future-risk analysis →</a>
   </section>
   {% endif %}
